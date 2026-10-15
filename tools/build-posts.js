@@ -19,7 +19,7 @@ const SITE = 'https://www.divinerubber.com/';
 
 const TYPES = {
   blog: {
-    list: 'blogs.html', listLabel: 'Blogs', prefix: 'blog-', filter: 'blogs', bodyClass: 'page--blog-detail',
+    list: 'blogs.html', listLabel: 'Blogs', back: 'Back to Blogs', noun: 'Article', prefix: 'blog-', filter: 'blogs', bodyClass: 'page--blog-detail',
     titleSuffix: 'Divine Rubber Blog',
     filters: [['all', 'All'], ['rubber-products', 'Rubber Products'], ['manufacturing', 'Manufacturing &amp; Technology'],
       ['quality', 'Quality &amp; Standards'], ['applications', 'Industry Applications'], ['guides', 'Product Guides'],
@@ -27,7 +27,7 @@ const TYPES = {
     related: { eyebrow: 'Keep Reading', title: 'Related Articles', all: 'All Articles' },
   },
   news: {
-    list: 'news.html', listLabel: 'News &amp; Events', prefix: 'news-', filter: 'news', bodyClass: 'page--news-detail',
+    list: 'news.html', listLabel: 'News &amp; Events', back: 'Back to News &amp; Events', noun: 'Article', prefix: 'news-', filter: 'news', bodyClass: 'page--news-detail',
     titleSuffix: 'Divine Rubber News',
     filters: [['all', 'All'], ['company', 'Company News'], ['products', 'Product Spotlight'],
       ['manufacturing', 'Manufacturing'], ['events', 'Events']],
@@ -141,6 +141,28 @@ function aside(post, type) {
           </aside>`;
 }
 
+// ← Previous Article / Next Article → (order of the listing page). A missing side keeps
+// its empty slot so the other link stays on its own side.
+function postNav(post, type, list) {
+  const i = list.indexOf(post);
+  const link = (p, dir) => {
+    if (!p) return `<span class="post-nav__item post-nav__item--${dir} post-nav__item--empty" aria-hidden="true"></span>`;
+    const label = dir === 'prev'
+      ? `<span class="post-nav__label">${ICON('arrow-right')}Previous ${TYPES[type].noun}</span>`
+      : `<span class="post-nav__label">Next ${TYPES[type].noun}${ICON('arrow-right')}</span>`;
+    return `<a class="post-nav__item post-nav__item--${dir}" href="${fileOf(p, type)}" rel="${dir}">
+            ${label}
+            <span class="post-nav__title">${p.title}</span>
+          </a>`;
+  };
+  return `<div class="section section--sm section--flush-top">
+        <nav class="container post-nav" aria-label="More ${type === 'blog' ? 'articles' : 'news &amp; events'}">
+          ${link(list[i - 1], 'prev')}
+          ${link(list[i + 1], 'next')}
+        </nav>
+      </div>`;
+}
+
 function relatedPosts(post, list) {
   const others = list.filter((p) => p !== post);
   return [...others.filter((p) => p.cat === post.cat), ...others.filter((p) => p.cat !== post.cat)].slice(0, 3);
@@ -165,13 +187,16 @@ async function detailPage(post, type, list, tpl) {
       <!-- 1. Header -->
       <header class="section section--sm article-header">
         <div class="container">
-          <nav class="breadcrumb breadcrumb--dark article-header__crumbs" aria-label="Breadcrumb">
-            <ol class="breadcrumb__list">
-              <li class="breadcrumb__item"><a href="index.html">Home</a></li>
-              <li class="breadcrumb__item"><a href="${T.list}">${T.listLabel}</a></li>
-              <li class="breadcrumb__item"><span aria-current="page">${post.crumb}</span></li>
-            </ol>
-          </nav>
+          <div class="article-header__top">
+            <nav class="breadcrumb breadcrumb--dark" aria-label="Breadcrumb">
+              <ol class="breadcrumb__list">
+                <li class="breadcrumb__item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb__item"><a href="${T.list}">${T.listLabel}</a></li>
+                <li class="breadcrumb__item"><span aria-current="page">${post.crumb}</span></li>
+              </ol>
+            </nav>
+            <a class="article-back" href="${T.list}">${ICON('arrow-right')}${T.back}</a>
+          </div>
           <a class="article-header__cat" href="${T.list}?category=${post.cat}">${post.catLabel}</a>
           <h1 class="article-header__title">${post.title}</h1>
           <p class="article-header__meta">
@@ -193,6 +218,9 @@ async function detailPage(post, type, list, tpl) {
           ${aside(post, type)}
         </div>
       </div>
+
+      <!-- Previous / next in listing order (newest first); the first and last article show one link -->
+      ${postNav(post, type, list)}
     </article>
 
     <!-- 3. Related -->

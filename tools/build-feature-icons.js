@@ -27,9 +27,12 @@ const IMPORTED = fs.existsSync(IMPORTED_DIR)
 const KEEP = ['award', ...IMPORTED];
 const SUPPLIED = { award: 'icon1.svg' }; // name → source file in project root (copied unchanged)
 
+// Bolder line for icons whose reference design uses one (Contact "Talk to the Right Team")
+const STROKE = { 'sales-chat': 1.5, 'spec-messages': 1.5, 'partner-mail': 1.5 };
+
 const NAMES = ['gear', 'team', 'thumb', 'award', 'globe', 'grid', 'tag', 'truck', 'briefcase', 'leaf', 'handshake',
   'file-text', 'shield', 'sparkle', 'footprint', 'droplet', 'layers', 'tractor', 'ruler', 'search', 'box', 'home',
-  'clipboard', 'map-pin', 'phone', 'mail', 'factory', 'warehouse', 'box-send', 'clock', 'utensils', 'building', 'store', 'hospital', 'door', 'spec-doc', 'partner-handshake', 'sales-tag'];
+  'clipboard', 'map-pin', 'phone', 'mail', 'factory', 'warehouse', 'box-send', 'clock', 'utensils', 'building', 'store', 'hospital', 'door', 'sales-chat', 'spec-messages', 'partner-mail'];
 
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -51,7 +54,7 @@ for (const name of NAMES) {
     .replace(/stroke="currentColor"/g, 'stroke="url(#g)"')
     .replace(/fill="currentColor"/g, 'fill="url(#g)"')
     // thinner, finer line to match the detailed outline style of icon1.svg
-    .replace(/stroke-width="[\d.]+"/g, 'stroke-width="1.1"');
+    .replace(/stroke-width="[\d.]+"/g, `stroke-width="${STROKE[name] || 1.1}"`);
 
   const svg = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="g" x1="12" y1="1" x2="12" y2="23" gradientUnits="userSpaceOnUse"><stop stop-color="#027DB2"/><stop offset="1" stop-color="#21B8CD"/></linearGradient></defs>

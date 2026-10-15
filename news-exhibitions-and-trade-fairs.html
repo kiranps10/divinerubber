@@ -106,13 +106,16 @@
       <!-- 1. Header -->
       <header class="section section--sm article-header">
         <div class="container">
-          <nav class="breadcrumb breadcrumb--dark article-header__crumbs" aria-label="Breadcrumb">
-            <ol class="breadcrumb__list">
-              <li class="breadcrumb__item"><a href="index.html">Home</a></li>
-              <li class="breadcrumb__item"><a href="news.html">News &amp; Events</a></li>
-              <li class="breadcrumb__item"><span aria-current="page">Exhibitions</span></li>
-            </ol>
-          </nav>
+          <div class="article-header__top">
+            <nav class="breadcrumb breadcrumb--dark" aria-label="Breadcrumb">
+              <ol class="breadcrumb__list">
+                <li class="breadcrumb__item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb__item"><a href="news.html">News &amp; Events</a></li>
+                <li class="breadcrumb__item"><span aria-current="page">Exhibitions</span></li>
+              </ol>
+            </nav>
+            <a class="article-back" href="news.html"><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-arrow-right"></use></svg>Back to News &amp; Events</a>
+          </div>
           <a class="article-header__cat" href="news.html?category=events">Events</a>
           <h1 class="article-header__title">Exhibitions and Trade Fairs: Meet Divine Rubber</h1>
           <p class="article-header__meta">
@@ -143,6 +146,17 @@
             </a>
           </aside>
         </div>
+      </div>
+
+      <!-- Previous / next in listing order (newest first); the first and last article show one link -->
+      <div class="section section--sm section--flush-top">
+        <nav class="container post-nav" aria-label="More news &amp; events">
+          <a class="post-nav__item post-nav__item--prev" href="news-coir-and-jute-ranges.html" rel="prev">
+            <span class="post-nav__label"><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-arrow-right"></use></svg>Previous Article</span>
+            <span class="post-nav__title">Natural Ranges: Coir and Jute from Kerala</span>
+          </a>
+          <span class="post-nav__item post-nav__item--next post-nav__item--empty" aria-hidden="true"></span>
+        </nav>
       </div>
     </article>
 

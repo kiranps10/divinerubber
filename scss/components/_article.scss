@@ -2,7 +2,14 @@
 
 // Article layout shared by blog-detail and news-detail
 .article-header {
-  &__crumbs {
+
+  // Breadcrumb on the left, "Back to …" on the right (wraps under it on small screens)
+  &__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
     margin-bottom: fluid(20, 36);
   }
 
@@ -17,8 +24,8 @@
     text-transform: uppercase;
   }
 
+  // Full container width: one line where it fits on desktop, natural balanced wrapping below
   &__title {
-    max-width: 22ch;
     margin-top: 18px;
     font-family: $font-heading;
     font-size: fluid(32, 60);
@@ -56,6 +63,119 @@
 
     @include respond-to(sm) {
       aspect-ratio: 4 / 3;
+    }
+  }
+}
+
+// "Back to Blogs" / "Back to News & Events"
+.article-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: $weight-medium;
+  color: $color-primary-text;
+  text-decoration: none;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    transform: scaleX(-1); // arrow points back
+    @include transition(transform);
+  }
+
+  @include hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    svg {
+      transform: scaleX(-1) translateX(3px);
+    }
+  }
+}
+
+// ← Previous Article / Next Article →
+.post-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: fluid(12, 24);
+  padding-top: fluid(24, 36);
+  border-top: 1px solid $color-border-light;
+
+  &__item {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: fluid(16, 24);
+    border: $border;
+    text-decoration: none;
+    @include transition(border-color, box-shadow);
+
+    &--next {
+      text-align: right;
+    }
+
+    &--empty {
+      border: 0;
+      padding: 0;
+    }
+
+    @include hover {
+      border-color: $color-accent;
+      box-shadow: $card-hover-shadow;
+
+      .post-nav__title {
+        color: $color-primary-text;
+      }
+    }
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $color-primary-text;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &__item--prev &__label svg {
+    transform: scaleX(-1);
+  }
+
+  &__item--next &__label {
+    justify-content: flex-end;
+  }
+
+  &__title {
+    font-size: fluid(17, 20);
+    font-weight: $weight-medium;
+    line-height: 1.35;
+    color: $color-heading;
+    @include transition(color);
+  }
+
+  // Phones: stacked, both left-aligned
+  @include respond-to(xs) {
+    grid-template-columns: minmax(0, 1fr);
+
+    &__item--next {
+      text-align: left;
+    }
+
+    &__item--next &__label {
+      justify-content: flex-start;
+    }
+
+    &__item--empty {
+      display: none;
     }
   }
 }
