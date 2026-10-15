@@ -1,0 +1,49 @@
+@use '../abstracts' as *;
+
+// Privacy, Terms and 404 pages
+
+.legal {
+  &__crumbs {
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    margin-bottom: fluid(24, 40);
+    font-family: $font-heading;
+    font-size: fluid(34, 56);
+    line-height: 1.15;
+    color: $color-heading;
+  }
+}
+
+.site-header__inner--simple {
+  grid-template-columns: auto;
+  justify-content: center;
+
+  .site-header__logo {
+    grid-column: 1;
+  }
+}
+
+.not-found {
+  text-align: center;
+
+  &__code {
+    font-family: $font-heading;
+    font-size: fluid(80, 160);
+    line-height: 1;
+    color: $color-primary;
+  }
+
+  &__title {
+    margin: 16px 0;
+    font-family: $font-heading;
+    font-size: fluid(28, 44);
+    color: $color-heading;
+  }
+
+  &__actions {
+    justify-content: center;
+    margin-top: 32px;
+  }
+}

@@ -1,0 +1,97 @@
+@use '../abstracts' as *;
+
+// Only one panel open at a time (handled in js/components/accordion.js).
+// Height animates with grid-template-rows so content is never clipped.
+.accordion {
+  border-top: $border;
+
+  &__item {
+    border-bottom: $border;
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    padding: fluid(16, 24) 0;
+    text-align: left;
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-medium;
+    color: $color-heading;
+
+    @include hover {
+      color: $color-primary-text;
+    }
+  }
+
+  &__icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    @include transition(background-color, border-color);
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 2px;
+      background: currentColor;
+      transform: translate(-50%, -50%);
+      @include transition(transform);
+    }
+
+    &::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+  }
+
+  &__trigger[aria-expanded='true'] {
+    color: $color-primary-text;
+
+    .accordion__icon {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+
+      &::after {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+    }
+  }
+
+  &__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows $duration $ease;
+
+    &.is-open {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  &__inner {
+    overflow: hidden;
+  }
+
+  &__content {
+    padding-bottom: fluid(18, 26);
+    color: $color-muted;
+
+    > * + * {
+      margin-top: 0.8em;
+    }
+  }
+}
+
+// Paragraphs inside accordion panels → P1
+.accordion__content p {
+  @include p1;
+}

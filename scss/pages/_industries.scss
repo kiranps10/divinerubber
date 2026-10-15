@@ -1,0 +1,59 @@
+@use '../abstracts' as *;
+
+// Industries page
+
+// Overview: 2×2 photo mosaic
+.io-images {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: fluid(8, 12);
+
+  img {
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+  }
+}
+
+// Why industries choose us: heading left, intro right
+.why-industries__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  align-items: end;
+  gap: 20px fluid(32, 80);
+
+  @include respond-to(md) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.why-industries__intro {
+  @include p1;
+  color: $color-muted-on-dark;
+}
+
+.why-industries__grid {
+  gap: fluid(12, 20);
+}
+
+.industry-grid {
+  // Anchored items scroll clear of the fixed header
+  > li {
+    scroll-margin-top: $header-height + 20px;
+  }
+
+}
+
+// Applications & benefits: compact section — tighter padding and heading gap
+.benefits-section {
+  padding-block: fluid(48, 80);
+
+  .heading-row {
+    margin-bottom: fluid(24, 40);
+  }
+}
+
+// All six benefit cards share one row height, also when the grid wraps to 2 columns
+.benefit-grid {
+  grid-auto-rows: 1fr;
+}

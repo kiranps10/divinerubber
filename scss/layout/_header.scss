@@ -1,0 +1,172 @@
+@use 'sass:math';
+@use '../abstracts' as *;
+
+// Header: transparent over dark hero/banner, solid once scrolled or on pages without a banner.
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: $z-header;
+  color: $color-white;
+  // Colour fades with the background so text/icons don't snap on scroll
+  @include transition(background-color, color, box-shadow);
+
+  &__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 24px;
+    height: $header-height;
+    transition: height $duration $ease;
+  }
+
+  &__logo {
+    grid-column: 2;
+    display: block;
+    width: fluid(112, 216);
+    transition: width $duration $ease;
+
+    img {
+      width: 100%;
+      height: auto;
+      // The logo file has 11px of transparent space above the oval and 15px below
+      // (of 172px). Nudge it down by the 2px imbalance so the visible oval is truly
+      // centred — scales with the image at every size.
+      transform: translateY(#{math.div(2, 172) * 100%});
+    }
+  }
+
+  // Scrolled: the logo shrinks smoothly (width transition above) so it sits inside the bar.
+  // Desktop bar is 76px → cap 158px wide (64px tall). Tablet/mobile bar is 72px → cap
+  // 124px wide (50px tall). Smaller logos are left as they are. Top of page = original size.
+  &.is-scrolled &__logo {
+    width: min(#{fluid(112, 216)}, 158px);
+
+    @include respond-to(lg) {
+      width: min(#{fluid(112, 216)}, 124px);
+    }
+  }
+
+  &__actions {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: fluid(12, 32);
+  }
+
+  &__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: fluid(15, 18);
+    text-decoration: none;
+    white-space: nowrap;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    @include hover {
+      color: $color-accent;
+    }
+  }
+
+  // Solid dark state: pages without a banner (at the top of the page)
+  .page--solid-header &,
+  body.nav-open & {
+    background: $color-dark;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  // Scrolled down (all pages): light background, black navigation text.
+  // Icons use currentColor, so they turn black too (shapes unchanged).
+  // Back at the top, js/components/navigation.js removes .is-scrolled → original style.
+  &.is-scrolled {
+    background: $header-scrolled-bg;
+    color: $header-scrolled-text;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  &.is-scrolled &__phone {
+    @include hover {
+      color: $color-primary-text;
+    }
+  }
+
+  // Outlined header controls (menu button, mobile phone button) need a dark outline on light
+  &.is-scrolled .nav-toggle,
+  &.is-scrolled &__phone {
+    border-color: rgba(0, 0, 0, 0.25);
+  }
+
+  // Mobile menu open: header stays dark to join the dark slide-out menu
+  body.nav-open &.is-scrolled {
+    background: $color-dark;
+    color: $color-white;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+
+    .nav-toggle,
+    .site-header__phone {
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  &.is-scrolled &__inner {
+    height: $header-height - 20px;
+  }
+
+  @include respond-to(lg) {
+    &__inner,
+    &.is-scrolled &__inner {
+      grid-template-columns: auto minmax(0, 1fr);
+      height: $header-height-mobile;
+    }
+
+    &__logo {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    &__actions {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  @include respond-to(xs) {
+    // `.site-header &__x` raises specificity above the shared .btn styles
+    .site-header &__phone-text,
+    .site-header &__finder {
+      display: none;
+    }
+
+    &__phone {
+      display: inline-grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+  }
+}
+
+// Gradient over the top of light/complex images so header text stays readable
+.header-scrim {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 180px;
+  background: linear-gradient(180deg, rgba(20, 22, 27, 0.75), rgba(20, 22, 27, 0));
+  pointer-events: none;
+  z-index: 1;
+}
+
+// Pages without a banner need room for the fixed header
+.page--solid-header main {
+  padding-top: $header-height;
+
+  @include respond-to(lg) {
+    padding-top: $header-height-mobile;
+  }
+}

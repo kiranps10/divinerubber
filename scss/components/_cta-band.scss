@@ -1,0 +1,61 @@
+@use '../abstracts' as *;
+
+// Closing CTA used at the end of every inner page ("Let's Build Something Better")
+.cta-band {
+  position: relative;
+  overflow: hidden;
+  padding-block: fluid(56, 110);
+  color: $color-white;
+  background: $color-dark;
+
+  &__media {
+    position: absolute;
+    inset: 0;
+
+    img {
+      @include cover-image;
+      opacity: 0.28;
+      filter: grayscale(1);
+    }
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) auto;
+    align-items: center;
+    gap: 28px 60px;
+
+    @include respond-to(md) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__eyebrow {
+    @include eyebrow-text;
+    display: block;
+    color: $color-white;
+
+    &::before {
+      @include accent-bar(16px, 4px);
+      margin-bottom: 18px;
+      background: $color-accent;
+    }
+  }
+
+  &__title {
+    margin-top: 12px;
+    font-family: $font-heading;
+    font-size: fluid-token($fs-h1);
+    line-height: $lh-heading;
+    text-wrap: balance;
+  }
+
+  &__text {
+    max-width: 720px;
+    margin-top: 16px;
+    @include p1;
+    color: #dfe1e4;
+  }
+}

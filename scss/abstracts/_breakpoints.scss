@@ -1,0 +1,33 @@
+@use 'sass:map';
+
+// Central breakpoint list — never write raw media-query numbers in components.
+$breakpoints: (
+  xxl: 1600px,  // large desktop
+  xl: 1366px,   // desktop / large laptop
+  lg: 1200px,   // small laptop
+  md: 1024px,   // tablet landscape
+  sm: 768px,    // tablet portrait
+  xs: 576px,    // large mobile
+  xxs: 400px    // small mobile
+);
+
+@function bp($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error 'Unknown breakpoint `#{$name}`. Use one of #{map.keys($breakpoints)}.';
+  }
+  @return map.get($breakpoints, $name);
+}
+
+// Desktop-first: styles apply BELOW the breakpoint.  @include respond-to(md) { … }
+@mixin respond-to($name) {
+  @media (max-width: #{bp($name) - 0.02px}) {
+    @content;
+  }
+}
+
+// Styles apply AT OR ABOVE the breakpoint.  @include respond-above(lg) { … }
+@mixin respond-above($name) {
+  @media (min-width: bp($name)) {
+    @content;
+  }
+}

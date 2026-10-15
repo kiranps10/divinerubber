@@ -1,0 +1,7 @@
+# STAGING robots.txt — blocks all crawlers.
+# BEFORE PRODUCTION LAUNCH replace the two lines below with:
+#   User-agent: *
+#   Allow: /
+#   Sitemap: https://www.divinerubber.com/sitemap.xml
+User-agent: *
+Disallow: /

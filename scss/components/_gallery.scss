@@ -1,0 +1,274 @@
+@use '../abstracts' as *;
+
+// Masonry-style photo grid using CSS columns (no JS layout, no layout shift)
+.photo-grid {
+  columns: 3 320px;
+  column-gap: fluid(10, 20);
+
+  &--compact {
+    columns: 4 240px;
+  }
+
+  &__item {
+    break-inside: avoid;
+    margin-bottom: fluid(10, 20);
+  }
+
+  // Phones: two columns keeps the page from becoming an endless scroll
+  @include respond-to(xs) {
+    &,
+    &--compact {
+      columns: 2;
+      column-gap: 8px;
+    }
+
+    &__item {
+      margin-bottom: 8px;
+    }
+
+    .gallery-item__caption {
+      padding: 28px 10px 10px;
+
+      strong {
+        font-size: 14px;
+      }
+
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+// One gallery tile — a button that opens the lightbox
+.gallery-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  background: $color-dark;
+  color: $color-white;
+  cursor: zoom-in;
+
+  img {
+    width: 100%;
+    height: auto;
+    @include transition(transform, opacity);
+    transition-duration: $duration-slow;
+  }
+
+  &--square img {
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  &__caption {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 40px 18px 16px;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.82));
+    font-size: 15px;
+    line-height: 1.4;
+
+    strong {
+      display: block;
+      font-size: 16px;
+      font-weight: $weight-semibold;
+    }
+
+    span {
+      color: #d0d2d6;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__zoom {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    @include transition(opacity);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  @include hover {
+    img {
+      transform: scale(1.05);
+    }
+
+    .gallery-item__zoom {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible .gallery-item__zoom {
+    opacity: 1;
+  }
+}
+
+// Video card (gallery + homepage)
+.video-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-white;
+  border: $border;
+
+  &__thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: $color-dark;
+
+    img {
+      @include cover-image;
+      @include transition(transform);
+    }
+
+    @include hover {
+      img {
+        transform: scale(1.04);
+      }
+
+      .play-btn {
+        background: $color-primary;
+      }
+    }
+  }
+
+  &__body {
+    display: grid;
+    gap: 8px;
+    padding: fluid(18, 26);
+  }
+
+  &__cat {
+    font-size: 13px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $color-primary-text;
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+
+  &__text {
+    @include p1;
+    color: $color-muted;
+  }
+}
+
+// Round play button (design: factory video)
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: fluid(60, 96);
+  height: fluid(60, 96);
+  border-radius: 50%;
+  background: rgba(35, 38, 45, 0.85);
+  color: $color-white;
+  transform: translate(-50%, -50%);
+  @include transition(background-color, transform);
+
+  svg {
+    width: 30%;
+    height: 30%;
+    margin-left: 6%;
+  }
+}
+
+.media-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: $color-dark;
+
+  .video-feature__poster,
+  .video-feature__video,
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: cover;
+  }
+
+  .video-feature__video {
+    z-index: 2;
+    object-fit: contain;
+    background: #000;
+  }
+
+  &.is-playing .play-btn {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------
+// Filter gallery — heading + filter pills on one row, photo grid with
+// captions underneath (Infrastructure "Around the Facility", Industries "Our Mats at Work").
+// Tiles are .gallery-item buttons (lightbox); filtering via js/components/filter.js.
+// ---------------------------------------------------------------
+.filter-gallery {
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    margin-bottom: fluid-token($space-block);
+
+    .filter-tabs {
+      margin-bottom: 0;
+    }
+
+    @include respond-to(md) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: fluid(20, 28) fluid(12, 20);
+
+    .gallery-item img {
+      aspect-ratio: 4 / 3;
+      height: auto;
+      object-fit: cover;
+    }
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__caption {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+}

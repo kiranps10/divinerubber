@@ -1,0 +1,125 @@
+@use '../abstracts' as *;
+
+// Article layout shared by blog-detail and news-detail
+.article-header {
+  &__crumbs {
+    margin-bottom: fluid(20, 36);
+  }
+
+  &__cat {
+    display: inline-block;
+    padding: 6px 14px;
+    background: $color-dark;
+    color: $color-white;
+    font-size: 13px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    max-width: 22ch;
+    margin-top: 18px;
+    font-family: $font-heading;
+    font-size: fluid(32, 60);
+    line-height: 1.15;
+    color: $color-heading;
+    text-wrap: balance;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    margin-top: 20px;
+    font-size: 15px;
+    color: $color-muted;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      color: $color-primary;
+    }
+  }
+
+  &__image {
+    width: 100%;
+    margin-top: fluid(28, 48);
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+
+    @include respond-to(sm) {
+      aspect-ratio: 4 / 3;
+    }
+  }
+}
+
+.article-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: fluid(32, 80);
+  align-items: start;
+
+  @include respond-to(lg) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  &__aside {
+    position: sticky;
+    top: $header-height + 20px;
+    display: grid;
+    gap: 20px;
+    padding: 28px;
+    background: $color-light;
+
+    @include respond-to(lg) {
+      position: static;
+    }
+  }
+
+  &__aside-title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+}
+
+// Draft / sample notice shown on placeholder articles
+.draft-note {
+  display: flex;
+  gap: 12px;
+  padding: 14px 18px;
+  border-left: 4px solid $color-primary;
+  background: #e8f3f9;
+  font-size: 15px;
+  color: $color-primary-text;
+}
+
+// "Draft for review" label — shown instead of a date until a post is approved
+// (tools/posts.js: add `date` to publish)
+.post-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  background: #e8f3f9;
+  font-size: 12px;
+  font-weight: $weight-semibold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-primary-text;
+}
+
+.post-card__soon {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 14px;
+  font-weight: $weight-semibold;
+  color: $color-muted;
+}

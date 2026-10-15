@@ -1,0 +1,292 @@
+@use '../abstracts' as *;
+
+// =============================================================
+// Card hover effects — ONE consistent blue-gradient style site-wide.
+// Tokens: $card-hover-* / $gradient-card-hover* in abstracts/_variables.scss.
+//
+// Light cards: whole card fades to the brand blue gradient, all text + icons turn
+//              white, cyan border, ~4px lift, soft blue shadow.
+// Dark cards:  dark grey melts into deep blue, cyan border/glow, cyan icons.
+// Process steps (dark timelines): cyan badge ring, cyan connector + heading, icon lifts.
+// Image tiles: blue gradient overlay over the photo; captions stay on top.
+//
+// How the fade works: the gradient sits on a ::before layer behind the content
+// (z-index −1 inside `isolation: isolate`) and only its opacity animates —
+// gradients themselves cannot be transitioned. No size/spacing changes, so layout
+// never moves.
+// Active on mouse/trackpad hover (no sticky hover on touch) AND keyboard focus
+// inside the card (:has(:focus-visible)). Reduced motion: no lift.
+// Cards with their own effects keep them: image zoom (_image-zoom.scss), flip cards,
+// blue overlays on industry/expertise cards, project carousel.
+// =============================================================
+
+$t: $card-hover-duration $ease;
+
+// Hover (fine pointers) or keyboard focus somewhere inside
+@mixin card-active {
+  @include hover {
+    @content;
+  }
+
+  &:has(:focus-visible) {
+    @content;
+  }
+}
+
+// Gradient layer behind the card's content
+@mixin gradient-layer($gradient) {
+  position: relative;
+  isolation: isolate;
+  transition: transform $t, border-color $t, box-shadow $t;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: $gradient;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity $t;
+  }
+}
+
+// --- Light (white / bordered) cards ---------------------------
+$light-cards: (
+  '.feature-card:not(.feature-card--plain):not(.feature-card--dark)',
+  '.focus-card',
+  '.cert-card',
+  '.machine-card',
+  '.post-card',
+  '.video-card',
+  '.benefit-card',
+  '.capacity-points li'
+);
+
+// Text-bearing elements that turn white
+$text: ':is(h2, h3, h4, p, span, strong, small, a, li, time, dt, dd, svg)';
+
+#{$light-cards} {
+  @include gradient-layer($gradient-card-hover);
+
+  #{$text} {
+    transition: color $t, border-color $t;
+  }
+
+  // Gradient outline icons (<img>) → white
+  .feature-card__icon img,
+  > img[src*='/features/'] {
+    transition: filter $t;
+  }
+
+  @include card-active {
+    transform: translateY(-$card-hover-lift);
+    border-color: $card-hover-border;
+    box-shadow: $card-hover-shadow;
+
+    &::before {
+      opacity: 1;
+    }
+
+    #{$text} {
+      color: $color-white;
+    }
+
+    .feature-card__icon img,
+    > img[src*='/features/'] {
+      filter: brightness(0) invert(1);
+    }
+
+    // Draft label stays legible on the gradient
+    .post-status {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    // Inner divider lines
+    .machine-card__purpose {
+      border-top-color: rgba(255, 255, 255, 0.3);
+    }
+
+    // Benefit badge flips to white with a blue icon; title rule turns white
+    .benefit-card__icon {
+      background: $color-white;
+      border-color: rgba(255, 255, 255, 0.6);
+
+      img {
+        filter: none;
+      }
+    }
+
+    .benefit-card__title::after {
+      background: $color-white;
+    }
+  }
+}
+
+// --- Industry cards: they contain several product links, so the card itself only
+// lifts (cyan border, soft shadow, blue title) and the gradient goes on each tag ---
+.industry-detail {
+  transition: transform $t, border-color $t, box-shadow $t;
+
+  .industry-detail__title {
+    transition: color $t;
+  }
+
+  @include card-active {
+    transform: translateY(-$card-hover-lift);
+    border-color: $card-hover-border;
+    box-shadow: $card-hover-shadow;
+
+    .industry-detail__title {
+      color: $color-primary-text;
+    }
+  }
+}
+
+// Product tags: blue gradient + white text on hover / keyboard focus
+.product-tag {
+  @include gradient-layer($gradient-card-hover);
+  transition: color $t, border-color $t;
+
+  @mixin tag-on {
+    border-color: transparent;
+    color: $color-white;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  @include hover {
+    @include tag-on;
+  }
+
+  &:focus-visible {
+    @include tag-on;
+  }
+}
+
+// --- Dark cards (Industries "feature-card--dark") ---------------
+.feature-card--dark {
+  @include gradient-layer($gradient-card-hover-dark);
+
+  .feature-card__icon img {
+    transition: transform $t;
+  }
+
+  @include card-active {
+    transform: translateY(-3px);
+    border-color: rgba(30, 178, 202, 0.6);
+    box-shadow: $card-hover-glow-dark;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .feature-card__icon img {
+      transform: translateY(-2px);
+    }
+
+    .feature-card__arrow {
+      color: $color-accent;
+      transform: translateX(4px);
+    }
+  }
+}
+
+// --- Home "Why Divine" feature cells (dark panel, divider lines) ---
+.why__feature {
+  @include gradient-layer(linear-gradient(180deg, rgba(1, 124, 177, 0) 0%, rgba(1, 124, 177, 0.28) 100%));
+
+  .why__icon,
+  .why__stat {
+    transition: transform $t;
+  }
+
+  @include card-active {
+    &::before {
+      opacity: 1;
+    }
+
+    .why__icon,
+    .why__stat {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// --- Process timeline steps (About, Manufacturing & Quality) ---
+.process__step {
+  &::before {
+    transition: background-color $t;
+  }
+
+  &::after {
+    transition: box-shadow $t;
+  }
+
+  .process__title {
+    transition: color $t;
+  }
+
+  .process__icon img {
+    transition: transform $t;
+  }
+
+  @include card-active {
+    // Number badge keeps its blue fill (white numbers on cyan would be too low-contrast)
+    &::after {
+      box-shadow: 0 0 0 5px rgba(30, 178, 202, 0.3), 0 0 22px rgba(30, 178, 202, 0.35);
+    }
+
+    // Connector line out of this step
+    &::before {
+      background-color: rgba(30, 178, 202, 0.75);
+    }
+
+    .process__icon img {
+      transform: translateY(-3px);
+    }
+  }
+}
+
+// Headings turn cyan on the dark timelines (cyan on dark ≈ 6.6 : 1)
+.process--light-text .process__step {
+  @include card-active {
+    .process__title {
+      color: $color-accent;
+    }
+  }
+}
+
+// --- Product flip cards: keep the flip, add the cyan edge ----------
+@media (hover: hover) and (pointer: fine) {
+  .flip-card:hover .flip-card__inner,
+  .flip-card:focus-within .flip-card__inner {
+    box-shadow: $card-hover-shadow, 0 0 0 1px $card-hover-border;
+  }
+}
+
+// --- Gallery photos: same blue overlay as the industry cards, zoom kept ---
+.gallery-item {
+  @include industry-card-blue-hover;
+
+  // caption + zoom icon above the overlay
+  &__caption,
+  &__zoom {
+    z-index: 2;
+  }
+
+  &:has(:focus-visible)::before {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #{$light-cards},
+  .industry-detail,
+  .feature-card--dark {
+    transform: none !important;
+  }
+}

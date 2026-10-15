@@ -1,0 +1,18 @@
+@use '../abstracts' as *;
+
+// Every section's content sits in .container
+.container {
+  --gutter: #{fluid($gutter-min, $gutter-max)};
+  width: 100%;
+  max-width: calc(#{$container-max} + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+
+  &--medium {
+    max-width: calc(#{$container-medium} + 2 * var(--gutter));
+  }
+
+  &--narrow {
+    max-width: calc(#{$container-narrow} + 2 * var(--gutter));
+  }
+}

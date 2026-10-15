@@ -1,0 +1,172 @@
+@use '../abstracts' as *;
+
+// Footer text sizes/spacing from the Figma homepage: 18px text, 36px link rhythm.
+.footer-title {
+  margin-bottom: 29px;
+  font-size: fluid(16, 18);
+  font-weight: $weight-medium;
+  line-height: 22px;
+  text-transform: uppercase;
+  color: $color-white;
+
+  &::after {
+    @include accent-bar(24px, 3px);
+    margin-top: 12px;
+  }
+
+  &--spaced {
+    margin-top: 43px;
+  }
+}
+
+.footer-links {
+  display: grid;
+  gap: 14px;
+  font-size: fluid(16, 18);
+  line-height: 22px;
+
+  a {
+    text-decoration: none;
+    @include transition(color);
+
+    @include hover {
+      color: $color-accent;
+    }
+  }
+
+  &__more {
+    color: $color-highlight;
+  }
+}
+
+// Social icons: plain glyphs on a 48px rhythm (no boxes)
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-left: -4px;
+
+  a {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    color: $color-white;
+    @include transition(color);
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // Only real links (with an href) react to hover
+  a[href] {
+    @include hover {
+      color: $color-accent;
+    }
+  }
+}
+
+.footer-contact {
+  display: grid;
+  gap: 26px;
+  font-size: fluid(16, 18);
+  font-style: normal;
+  line-height: 28px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+
+    // Email sits a little further down in the design
+    &:last-child {
+      margin-top: 10px;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      margin-top: 4px;
+      color: $color-primary;
+    }
+
+    a {
+      text-decoration: none;
+      @include transition(color);
+
+      @include hover {
+        color: $color-accent;
+      }
+    }
+  }
+}
+
+.footer-map {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  max-width: 415px;
+  margin-top: 4px;
+
+  img {
+    width: 100%;
+    aspect-ratio: 415 / 228;
+    object-fit: cover;
+    @include transition(transform);
+  }
+
+  @include hover {
+    img {
+      transform: scale(1.04);
+    }
+  }
+
+  @include respond-to(lg) {
+    max-width: none;
+  }
+}
+
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 45px;
+  font-size: fluid(15, 17);
+
+  a {
+    text-decoration: none;
+    @include transition(color);
+
+    @include hover {
+      color: $color-accent;
+    }
+  }
+}
+
+.footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  font-size: fluid(15, 17);
+  letter-spacing: 0.04em;
+
+  // Colour S mark + white wordmark, as in the design (mark file has a 101px canvas,
+  // the glyph only uses its first ~12px, so the wordmark overlaps the empty part)
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  img {
+    display: block;
+    width: 101px;
+    height: auto;
+  }
+
+  &__mark {
+    margin-right: -87px;
+  }
+}

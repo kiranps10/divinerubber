@@ -1,0 +1,111 @@
+@use '../abstracts' as *;
+
+// Lightweight scroll-snap carousel (js/components/slider.js adds arrows, drag, dots).
+// Works without JS as a swipeable row.
+.slider {
+  position: relative;
+
+  &__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--slide-w, calc((100% - 3 * var(--slide-gap, 10px)) / 4));
+    gap: var(--slide-gap, 10px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > * {
+      scroll-snap-align: start;
+      min-width: 0;
+    }
+
+    &.is-dragging {
+      scroll-snap-type: none;
+      scroll-behavior: auto;
+      cursor: grabbing;
+      user-select: none;
+    }
+  }
+
+  &__nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    color: $color-dark;
+    transform: translateY(-50%);
+    @include transition(opacity, color);
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    &--prev {
+      left: calc(var(--gutter, 16px) * -0.8);
+    }
+
+    &--next {
+      right: calc(var(--gutter, 16px) * -0.8);
+    }
+
+    &:disabled {
+      opacity: 0.25;
+      cursor: default;
+    }
+
+    @include respond-to(md) {
+      display: none;
+    }
+  }
+
+  &__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    width: max-content;
+    margin: 28px auto 0;
+    padding: 6px 8px;
+    border-radius: $radius-pill;
+    background: #dfe3e8;
+  }
+
+  // 24px tap target (WCAG 2.5.8) with a small visual dot drawn inside
+  &__dot {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+
+    &::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $color-white;
+      @include transition(background-color, width);
+    }
+
+    &[aria-current='true']::after {
+      width: 20px;
+      border-radius: $radius-pill;
+      background: $color-primary;
+    }
+  }
+
+  // Everything fits — no need for arrows or dots
+  &.is-static &__nav,
+  &.is-static &__dots {
+    display: none;
+  }
+}

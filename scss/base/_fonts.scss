@@ -1,0 +1,18 @@
+// Self-hosted Google Fonts (SIL Open Font License). Files live in assets/fonts/.
+// Paths are relative to css/main.css.
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url('../assets/fonts/dm-sans-variable-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/playfair-display-400-latin.woff2') format('woff2');
+}

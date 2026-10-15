@@ -1,0 +1,120 @@
+@use '../abstracts' as *;
+
+// Reusable text styles — apply to ANY element (h1–h6, p, span) via class.
+
+.t-display {
+  font-family: $font-heading;
+  font-size: fluid-token($fs-display);
+  font-weight: $weight-regular;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.t-h1 {
+  font-family: $font-heading;
+  font-size: fluid-token($fs-h1);
+  font-weight: $weight-regular;
+  line-height: $lh-heading;
+}
+
+.t-h2 {
+  font-family: $font-heading;
+  font-size: fluid-token($fs-h2);
+  font-weight: $weight-regular;
+  line-height: $lh-heading;
+}
+
+.t-h3 {
+  font-family: $font-body;
+  font-size: fluid-token($fs-h3);
+  font-weight: $weight-medium;
+  line-height: 1.3;
+}
+
+.t-h4 {
+  font-family: $font-body;
+  font-size: fluid-token($fs-h4);
+  font-weight: $weight-semibold;
+  line-height: 1.35;
+}
+
+// P1 paragraph (lead paragraphs use the same client P1 spec)
+.t-lead,
+.t-p1 {
+  @include p1;
+}
+
+.t-small {
+  font-size: fluid-token($fs-small);
+}
+
+.t-eyebrow {
+  @include eyebrow-text;
+}
+
+.t-muted {
+  color: $color-muted;
+}
+
+// Long-form article / CMS content (blog, news, product descriptions).
+// Styling headings by tag is acceptable here because this is editor-generated content.
+.prose {
+  max-width: 76ch;
+  color: $color-body;
+
+  > * + * {
+    margin-top: 1.1em;
+  }
+
+  p,
+  li {
+    @include p1;
+  }
+
+  h2 {
+    margin-top: 1.8em;
+    font-family: $font-heading;
+    font-size: fluid-token($fs-h2);
+    line-height: $lh-heading;
+    color: $color-heading;
+  }
+
+  h3 {
+    margin-top: 1.5em;
+    font-size: fluid-token($fs-h3);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.3em;
+
+    li + li {
+      margin-top: 0.4em;
+    }
+  }
+
+  a {
+    color: $color-primary-text;
+    text-underline-offset: 3px;
+  }
+
+  figure img {
+    width: 100%;
+  }
+
+  figcaption {
+    margin-top: 10px;
+    font-size: fluid-token($fs-small);
+    color: $color-muted;
+  }
+
+  blockquote {
+    padding-left: 24px;
+    border-left: 4px solid $color-primary;
+    font-family: $font-heading;
+    font-size: fluid-token($fs-h4);
+    color: $color-heading;
+  }
+}

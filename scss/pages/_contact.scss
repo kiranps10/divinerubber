@@ -1,0 +1,96 @@
+@use '../abstracts' as *;
+
+// Contact page
+
+.contact-list {
+  display: grid;
+  gap: 24px;
+  margin-top: fluid(24, 40);
+  font-style: normal;
+
+  &__item {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    background: $color-light;
+
+    img {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &__label {
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $color-primary-text;
+  }
+
+  a {
+    color: $color-heading;
+    text-decoration: none;
+
+    @include hover {
+      color: $color-primary-text;
+      text-decoration: underline;
+    }
+  }
+}
+
+.contact-map {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  iframe {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    min-height: 300px;
+    border: 0;
+    background: $color-light;
+  }
+
+  &__link {
+    align-self: flex-start;
+  }
+}
+
+// Desktop: contact details and map share one height — top and bottom edges line up;
+// the map grows to fill the column (the link stays at the bottom)
+.contact-info {
+  align-items: stretch;
+
+  @include respond-above(md) {
+    .contact-map iframe {
+      flex: 1;
+      aspect-ratio: auto;
+    }
+  }
+}
+
+.contact-form {
+  padding: fluid(22, 56);
+  background: $color-white;
+  border: $border;
+
+  .form__note a {
+    color: $color-primary-text;
+  }
+}
+
+.dept-card .link-arrow {
+  margin-top: auto;
+  word-break: break-word;
+}

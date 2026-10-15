@@ -1,0 +1,50 @@
+@use '../abstracts' as *;
+
+// Manufacturing & Quality page
+
+.qa-steps {
+  margin-top: fluid-token($space-block);
+}
+
+.test-images {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  img:first-child {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 10;
+  }
+
+  img:last-child {
+    grid-column: 2;
+    aspect-ratio: 3 / 2;
+    margin-top: -18%;
+    border: 8px solid $color-white;
+  }
+
+  @include respond-to(md) {
+    img:last-child {
+      display: none;
+    }
+  }
+}
+
+// Quality assurance steps: gradient icon first, step number in the top corner
+.qa-step {
+  position: relative;
+
+  .feature-card__step {
+    position: absolute;
+    top: fluid(18, 30);
+    right: fluid(20, 32);
+    font-size: fluid(24, 32);
+    color: $color-primary-text; // full colour: readable (AA contrast)
+  }
+}

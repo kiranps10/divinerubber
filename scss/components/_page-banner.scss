@@ -1,0 +1,106 @@
+@use '../abstracts' as *;
+
+// Inner-page banner: image + overlay + breadcrumb + title + subtext.
+// Height grows with content (no fixed/100vh heights).
+.page-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: fluid(380, 560);
+  padding-top: $header-height + 40px;
+  padding-bottom: fluid(40, 90);
+  overflow: hidden;
+  color: $color-white;
+  background: $color-dark;
+
+  @include respond-to(lg) {
+    padding-top: $header-height-mobile + 40px;
+  }
+
+  &__media {
+    position: absolute;
+    inset: 0;
+
+    img {
+      @include cover-image;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: $overlay-banner;
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  &__title {
+    margin-top: 18px;
+    font-family: $font-heading;
+    font-size: fluid(36, 76);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  &__text {
+    max-width: 680px;
+    margin-top: 18px;
+    @include p1;
+    color: #e6e7e9;
+  }
+}
+
+// Breadcrumb
+.breadcrumb {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-size: 15px;
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    & + &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-top: 1.5px solid currentColor;
+      border-right: 1.5px solid currentColor;
+      transform: rotate(45deg);
+      opacity: 0.7;
+    }
+
+    a {
+      text-decoration: none;
+      opacity: 0.85;
+
+      @include hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+    }
+
+    [aria-current='page'] {
+      color: $color-accent;
+    }
+  }
+
+  // On light backgrounds (detail pages)
+  &--dark {
+    color: $color-muted;
+
+    [aria-current='page'] {
+      color: $color-primary-text;
+    }
+  }
+}

@@ -1,0 +1,118 @@
+@use 'variables' as *;
+@use 'functions' as *;
+
+// Visible, consistent keyboard focus ring
+@mixin focus-ring($color: $color-primary, $offset: 3px) {
+  outline: 2px solid $color;
+  outline-offset: $offset;
+}
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Only apply hover styles on devices that really hover (avoids sticky hover on touch)
+@mixin hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+@mixin transition($props...) {
+  transition-property: $props;
+  transition-duration: $duration;
+  transition-timing-function: $ease;
+}
+
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Image that fills its box without distortion
+@mixin cover-image($position: center) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: $position;
+}
+
+// ---------------------------------------------------------------
+// Client typography spec (same on desktop and mobile)
+// ---------------------------------------------------------------
+
+// P1 — all paragraph text and bullet points: DM Sans Light 18px, line-height 26px, letter-spacing 1%
+@mixin p1 {
+  font-family: $font-body;
+  font-size: $p1-size;
+  font-weight: $p1-weight;
+  line-height: $p1-line-height;
+  letter-spacing: $p1-letter-spacing;
+}
+
+// Subheading / eyebrow labels (e.g. "SMART PRODUCT FINDER"):
+// DM Sans Regular 20px, line-height 105%, letter-spacing 0.3em
+@mixin eyebrow-text {
+  font-family: $font-body;
+  font-size: $eyebrow-size;
+  font-weight: $weight-regular;
+  line-height: $eyebrow-line-height;
+  letter-spacing: $ls-eyebrow;
+  text-transform: uppercase;
+}
+
+// Short blue bar used above eyebrows across the design
+@mixin accent-bar($width: 16px, $height: 4px) {
+  content: '';
+  display: block;
+  width: $width;
+  height: $height;
+  background: $color-primary;
+}
+
+// Blue hover overlay for industry cards (Figma, Home "Our Categories"):
+// #000 0% → #027DB2 100% gradient at 70% opacity, 300ms. Sits above the photo and
+// dark overlay, below the white label (z-index 1). Used on Home and About › Applications.
+// Touch screens have no hover, so a press shows it too (.is-pressed); keyboard focus as well.
+@mixin industry-card-blue-hover {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #027db2 100%);
+    opacity: 0;
+    pointer-events: none;
+    @include transition(opacity);
+  }
+
+  @include hover {
+    &::before {
+      opacity: 0.7;
+    }
+  }
+
+  // .is-pressed = finger down on a touch screen (js/main.js), :active as a fallback
+  &:focus-visible::before,
+  &:active::before,
+  &.is-pressed::before {
+    opacity: 0.7;
+  }
+
+  &:active img,
+  &.is-pressed img {
+    filter: grayscale(0);
+  }
+}

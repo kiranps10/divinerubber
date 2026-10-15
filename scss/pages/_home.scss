@@ -1,0 +1,1363 @@
+@use '../abstracts' as *;
+
+$hero-gradient: radial-gradient(120% 90% at 70% 10%, #4d5058 0%, #2a2d33 45%, #1f2126 100%);
+
+// =============================================================
+// IMAGE HOVER ZOOM — homepage content photos (not logos, icons or patterns).
+// The frame clips the image, so the zoom never changes the layout.
+// (Industry, product and project cards have their own zoom in their components.)
+// =============================================================
+$zoom-scale: 1.05;
+
+.zoom-frame {
+  overflow: hidden;
+
+  > img {
+    transition: transform 0.8s $ease;
+  }
+
+  // Wrapper sized by its own class (e.g. .why__thumb) → image fills it
+  &:not(.why__media):not(.video-feature__media) > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include hover {
+    > img {
+      transform: scale($zoom-scale);
+    }
+  }
+
+  // Playing video: leave the poster alone
+  &.is-playing > img {
+    transform: none;
+  }
+}
+
+// Milestone photo behind the active card
+.journey .timeline__bg {
+  overflow: hidden;
+
+  img {
+    transition: transform 0.8s $ease;
+  }
+}
+
+.journey .timeline__item {
+  @include hover {
+    .timeline__bg img {
+      transform: scale($zoom-scale);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoom-frame > img,
+  .journey .timeline__bg img {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+// =============================================================
+// HERO
+// =============================================================
+@keyframes hero-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  // A true full-screen hero (allowed by the checklist), capped so it never gets huge
+  min-height: clamp(620px, 100svh, 1080px);
+  padding-top: $header-height + 24px;
+  padding-bottom: fluid(40, 120);
+  overflow: hidden;
+  color: $color-white;
+  background: $hero-gradient;
+
+  &__slides {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.9s $ease, visibility 0.9s;
+
+    // Incoming image settles from a slight zoom while it fades in
+    > img {
+      scale: 1.06;
+      transition: scale 1.8s $ease;
+    }
+
+    &.is-active {
+      opacity: 1;
+      visibility: visible;
+
+      > img {
+        scale: 1;
+      }
+    }
+
+    // Photo slides get a readability overlay on the text side
+    &:not(.hero__slide--product)::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(20, 22, 27, 0.85) 0%, rgba(20, 22, 27, 0.45) 55%, rgba(20, 22, 27, 0.15) 100%),
+        linear-gradient(0deg, rgba(20, 22, 27, 0.6), transparent 45%);
+    }
+  }
+
+  // The product photo has a white background; multiply blends it into the
+  // gradient exactly as in the Figma design. The gradient lives on the slide
+  // itself so the blend also works while slides cross-fade.
+  &__slide--product {
+    background: $hero-gradient;
+  }
+
+  &__product {
+    position: absolute;
+    top: 7%;
+    right: 2%;
+    width: min(64%, 1240px);
+    height: auto;
+    mix-blend-mode: multiply;
+  }
+
+  &__photo {
+    @include cover-image;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  &__text {
+    max-width: 860px;
+  }
+
+  &__title {
+    font-family: $font-heading;
+    font-size: fluid-token($fs-display);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+
+  &__lead {
+    max-width: 640px;
+    margin-top: fluid(20, 40);
+    @include p1;
+    color: #e4e5e8;
+  }
+
+  .btn-group {
+    margin-top: fluid(24, 44);
+  }
+
+  &__controls {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__next {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 400px;
+    padding: 12px 36px 12px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(35, 38, 45, 0.7);
+    backdrop-filter: blur(6px);
+    color: $color-white;
+    text-align: left;
+    @include transition(background-color, border-color);
+
+    @include hover {
+      background: rgba(35, 38, 45, 0.92);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  &__next-thumb {
+    width: 138px;
+    aspect-ratio: 138 / 100;
+    object-fit: cover;
+  }
+
+  &__next-text {
+    display: grid;
+    gap: 6px;
+    flex: 1;
+  }
+
+  &__next-label {
+    font-size: 14px;
+    color: #cfd1d5;
+  }
+
+  &__next-name {
+    font-size: 19px;
+    font-weight: $weight-medium;
+    text-transform: uppercase;
+  }
+
+  // One segment per slide; the current one fills over --hero-interval (js/components/hero.js
+  // moves to the next slide when the fill ends, then the bar resets)
+  &__progress {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+
+    span {
+      position: relative;
+      flex: 1;
+      height: 2px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.4);
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $color-accent;
+        transform: scaleX(0);
+        transform-origin: left center;
+      }
+
+      &.is-active::after {
+        animation: hero-progress var(--hero-interval, 6s) linear forwards;
+      }
+    }
+  }
+
+  // Hover / focus / hidden tab (is-holding) or the pause button (is-paused) freeze the fill
+  &.is-holding &__progress span::after,
+  &.is-paused &__progress span::after {
+    animation-play-state: paused;
+  }
+
+  &__pause {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(35, 38, 45, 0.7);
+    color: $color-white;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &__play-icon,
+  &.is-paused &__pause-icon {
+    display: none;
+  }
+
+  &.is-paused &__play-icon {
+    display: block;
+  }
+
+  // Reduced motion: no autoplay (see hero.js), no zoom, current segment shown full
+  @media (prefers-reduced-motion: reduce) {
+    &__slide,
+    &__slide > img {
+      transition: none;
+      scale: none;
+    }
+
+    &__progress span.is-active::after {
+      animation: none;
+      transform: none;
+    }
+  }
+
+  // Small laptop: tighten the next-product card
+  @include respond-to(xl) {
+    &__next {
+      width: 320px;
+      gap: 16px;
+      padding-right: 20px;
+    }
+
+    &__next-thumb {
+      width: 100px;
+    }
+  }
+
+  // Tablet & mobile: product image above the text, no overlap
+  @include respond-to(md) {
+    min-height: 0;
+    padding-top: $header-height-mobile + 24px;
+
+    &__slide--product {
+      position: absolute;
+    }
+
+    &__product {
+      top: $header-height-mobile + 16px;
+      left: 50%;
+      right: auto;
+      width: min(92%, 620px);
+      transform: translateX(-50%);
+    }
+
+    &__content {
+      flex-direction: column;
+      align-items: stretch;
+      padding-top: min(54vw, 360px);
+    }
+
+    &__controls {
+      width: 100%;
+    }
+
+    &__next {
+      flex: 1;
+      width: auto;
+    }
+  }
+
+  @include respond-to(xs) {
+    &__next {
+      padding: 8px 14px 8px 8px;
+    }
+
+    &__next-thumb {
+      width: 80px;
+    }
+
+    &__next-name {
+      font-size: 16px;
+    }
+  }
+}
+
+// =============================================================
+// INDUSTRIES (Our Categories)
+// =============================================================
+// Pattern (.deco) positions on this page are measured from the Figma homepage (1920px frame)
+.industries-home {
+  overflow: hidden;
+
+  // Arcs just above the first card row, circles beside the second row
+  &__deco-left {
+    top: 336px;
+    left: 0;
+  }
+
+  &__deco-right {
+    bottom: 272px;
+    right: -15px;
+  }
+
+  .heading-row {
+    align-items: center;
+  }
+
+  .section-heading {
+    max-width: none;
+    flex-shrink: 0;
+  }
+
+  .section__footer {
+    margin-top: fluid(28, 48);
+  }
+
+  // 8 cards: 4 → 2 columns (never 3, which would leave an orphan row)
+  &__grid {
+    @include respond-to(lg) {
+      --cols: 4;
+    }
+
+    @include respond-to(sm) {
+      --cols: 2;
+    }
+  }
+
+  // Blue gradient hover (shared mixin, components/_cards.scss)
+  .industry-card {
+    @include industry-card-blue-hover;
+  }
+}
+
+
+// =============================================================
+// WHY DIVINE
+// =============================================================
+.why {
+  display: grid;
+  grid-template-columns: minmax(0, 0.81fr) minmax(0, 1fr);
+  background: $color-dark;
+  color: $color-white;
+
+  &__media img {
+    @include cover-image;
+    min-height: 100%;
+  }
+
+  &__panel {
+    position: relative;
+    overflow: hidden;
+    padding: fluid(48, 124) fluid(20, 100) fluid(48, 110) fluid(20, 106);
+  }
+
+  &__head {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  &__logo {
+    display: inline-block;
+    width: 2.7em;
+    height: auto;
+    vertical-align: middle;
+    margin-left: 0.15em;
+  }
+
+  &__thumb {
+    width: fluid(140, 256);
+    aspect-ratio: 1;
+    flex-shrink: 0;
+  }
+
+  &__features {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: fluid(40, 96);
+  }
+
+  &__feature {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: fluid(22, 40) fluid(14, 40) fluid(22, 40) 0;
+    border-color: rgba(255, 255, 255, 0.1);
+    border-style: solid;
+    border-width: 0;
+
+    &:nth-child(-n + 3) {
+      border-bottom-width: 1px;
+    }
+
+    &:not(:nth-child(3n + 1)) {
+      padding-left: fluid(14, 40);
+      border-left-width: 1px;
+    }
+  }
+
+  &__stat {
+    font-size: fluid(32, 44);
+    line-height: 1;
+    color: $color-accent;
+  }
+
+  &__icon {
+    width: fluid(40, 50);
+    height: fluid(40, 50);
+  }
+
+  &__label {
+    max-width: 10ch;
+    font-size: fluid(16, 20);
+    line-height: 1.35;
+  }
+
+  @include respond-to(lg) {
+    &__thumb {
+      display: none;
+    }
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: minmax(0, 1fr);
+
+    &__media img {
+      aspect-ratio: 16 / 10;
+      min-height: 0;
+    }
+  }
+
+  @include respond-to(xs) {
+    &__features {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__feature,
+    &__feature:nth-child(-n + 3),
+    &__feature:not(:nth-child(3n + 1)) {
+      padding: 20px 14px 20px 0;
+      border-width: 0;
+    }
+
+    &__feature:nth-child(even) {
+      padding-left: 14px;
+      border-left-width: 1px;
+    }
+
+    &__feature:nth-child(-n + 4) {
+      border-bottom-width: 1px;
+    }
+  }
+}
+
+// =============================================================
+// JOURNEY
+// =============================================================
+.journey {
+  // Clip sideways only: the timeline handle overlaps the next section's top edge
+  overflow-x: clip;
+  overflow-y: visible;
+
+  &__deco-left {
+    top: 248px;
+    left: -63px;
+  }
+
+  &__deco-right {
+    top: 93px;
+    right: -71px;
+  }
+}
+
+
+// =============================================================
+// PRODUCT RANGE
+// =============================================================
+.range {
+  overflow: hidden;
+
+  &__deco {
+    top: 109px;
+    left: -3px;
+  }
+
+  // Stripes peeking out behind the last visible product card
+  &__deco-stripes {
+    bottom: 259px;
+    right: 18px;
+  }
+
+  // Flip cards (components/_flip-card.scss), 4 / 3 / 2 per view; phones show the
+  // next card peeking in
+  &__slider {
+    --slide-gap: 10px;
+    --slide-w: calc((100% - 3 * var(--slide-gap)) / 4);
+
+    @include respond-to(lg) {
+      --slide-w: calc((100% - 2 * var(--slide-gap)) / 3);
+    }
+
+    @include respond-to(md) {
+      --slide-w: calc((100% - var(--slide-gap)) / 2);
+    }
+
+    @include respond-to(xs) {
+      --slide-w: 84%;
+    }
+
+    .slider__track {
+      padding: 10px 2px 30px;
+    }
+
+    // Tablet / mobile: arrows move from the sides to a centred row under the cards
+    @include respond-to(md) {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0 16px;
+
+      .slider__track {
+        flex: 0 0 100%;
+        order: -1;
+      }
+
+      .slider__nav {
+        position: static;
+        display: inline-grid;
+        width: 48px;
+        height: 48px;
+        border: 1px solid $color-border;
+        border-radius: 50%;
+        background: $color-white;
+        transform: none;
+      }
+    }
+  }
+}
+
+// =============================================================
+// SMART PRODUCT FINDER
+// =============================================================
+.finder {
+  overflow: hidden;
+
+  // Arcs straddling the bottom-left corner of the doormat photo (design: half above,
+  // half below the photo's bottom edge, which sits on the section's bottom padding)
+  &__deco {
+    bottom: calc(#{fluid-token($space-section)} - 64px);
+    left: -15px;
+  }
+
+  &__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+    gap: fluid(32, 66);
+    align-items: stretch; // left column = panel height, so the photo ends level with the panel
+
+    @include respond-to(md) {
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  // Heading on top, photo fills the rest of the column (no empty band below it)
+  &__intro {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__image {
+    flex: 1 1 0; // fills the leftover height only — never makes the row taller
+    width: 100%;
+    min-height: 220px;
+    margin-top: fluid(24, 40);
+
+    @include respond-to(md) {
+      display: none;
+    }
+  }
+
+  &__panel {
+    min-width: 0;
+    padding: fluid(22, 78) fluid(18, 80);
+    background: $color-white;
+  }
+
+  &__tabs {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border-bottom: 1px solid $color-border-light;
+    font-size: fluid(12, 15);
+    font-weight: $weight-medium;
+    text-transform: uppercase;
+    color: $color-muted;
+
+    @include respond-to(xs) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+
+      // On phones show only the step numbers
+      .finder__tab {
+        font-size: 0;
+      }
+
+      .finder__num {
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  &__tab {
+    position: relative;
+    padding-bottom: 14px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: transparent;
+    }
+
+    &.is-active {
+      color: $color-heading;
+
+      &::after {
+        background: $color-primary;
+      }
+
+      .finder__num {
+        visibility: visible;
+      }
+    }
+
+    &.is-done {
+      color: $color-primary-text;
+    }
+  }
+
+  &__num {
+    display: block;
+    visibility: hidden;
+    font-size: fluid(18, 26);
+    font-weight: $weight-light;
+    color: #767676; // lightest grey that passes WCAG AA on white
+    line-height: 1.2;
+  }
+
+  &__step {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  &__question {
+    display: block;
+    // A fieldset's <legend> ignores margin-top in Chrome but not in Firefox/Safari, so the gap
+    // under the step tabs differed per browser. Floating it at full width makes it a normal
+    // box everywhere; the options below clear it.
+    float: left;
+    width: 100%;
+    margin: fluid(18, 24) 0 fluid(16, 22); // compact gap under the step tabs
+    padding: 0;
+    font-size: fluid(20, 30);
+    font-weight: $weight-medium;
+    line-height: 1.3;
+    color: $color-heading;
+  }
+
+  &__options {
+    clear: both;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: fluid(10, 20);
+
+    @include respond-to(xxs) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: fluid(28, 40);
+  }
+
+  // Required Terms & Privacy agreement on the last step
+  &__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: fluid(18, 24);
+    font-size: fluid(15, 16);
+    line-height: 1.5;
+    color: $color-body;
+
+    input {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      margin: 2px 0 0;
+      accent-color: $color-primary;
+      cursor: pointer;
+
+      &:focus-visible {
+        @include focus-ring;
+      }
+
+      &[aria-invalid='true'] {
+        outline: 2px solid $color-error;
+        outline-offset: 2px;
+      }
+    }
+
+    label {
+      cursor: pointer;
+    }
+
+    a {
+      color: $color-primary-text;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      @include hover {
+        text-decoration-thickness: 2px;
+      }
+    }
+  }
+
+  &__back[disabled] {
+    visibility: hidden;
+  }
+
+  // Every step and the result sit in the same grid cell: the stage is always as tall as
+  // the tallest one, so the panel never shrinks or shifts between steps (any screen width).
+  // Inactive ones keep their space but are invisible (also hidden from screen readers).
+  &__stage {
+    display: grid;
+
+    > * {
+      grid-area: 1 / 1;
+      align-self: start;
+    }
+
+    > [hidden] {
+      display: block !important; // beats the reset's [hidden] { display: none !important }
+      visibility: hidden;
+    }
+  }
+
+  // One line is always reserved, so the message appearing never moves the buttons
+  &__error {
+    min-height: 1.4em;
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: $color-error;
+  }
+
+  // Hidden on the result view but still holding its space (constant panel height)
+  &__nav[hidden] {
+    display: flex !important;
+    visibility: hidden;
+  }
+
+  &__result {
+    &:focus {
+      outline: none;
+    }
+
+    .btn-group {
+      margin-top: 28px;
+    }
+  }
+
+  &__result-note {
+    @include p1;
+    color: $color-muted;
+  }
+
+  &__result-list {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    // Room for the two suggestions even while empty, so the hidden result view
+    // reserves its full height in .finder__stage (no jump when results appear)
+    min-height: calc(2 * (34px + 1.7em) + 12px);
+    margin-top: 22px;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      border: $border;
+      font-weight: $weight-medium;
+      text-decoration: none;
+      @include transition(border-color, color);
+
+      @include hover {
+        border-color: $color-primary;
+        color: $color-primary-text;
+      }
+
+      svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// Radio option card (finder)
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 12px 20px;
+  border: 1px solid $color-border;
+  cursor: pointer;
+  font-size: fluid(15, 17);
+  font-weight: $weight-medium;
+  color: $color-heading;
+  @include transition(border-color, box-shadow);
+
+  input {
+    order: 2;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: $color-primary;
+  }
+
+  @include hover {
+    border-color: $color-dark;
+  }
+
+  &:has(input:checked) {
+    border-color: $color-primary;
+    box-shadow: inset 0 0 0 1px $color-primary;
+  }
+
+  &:has(input:focus-visible) {
+    @include focus-ring;
+  }
+}
+
+// =============================================================
+// GLOBAL MANUFACTURING VIDEO
+// =============================================================
+.scale {
+  overflow: hidden;
+
+  &__deco {
+    top: 76px;
+    right: -55px;
+  }
+
+  // Triangles behind the bottom-left corner of the video
+  &__deco-tri {
+    bottom: 73px;
+    left: 0;
+  }
+}
+
+.video-feature {
+  position: relative;
+  background: $color-dark;
+  color: $color-white;
+
+  &__media {
+    position: relative;
+    aspect-ratio: 1253 / 590;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.7) 100%);
+      pointer-events: none;
+    }
+
+    &.is-playing::after,
+    &.is-playing .play-btn {
+      display: none;
+    }
+  }
+
+  &__poster,
+  &__video {
+    position: absolute;
+    inset: 0;
+    @include cover-image;
+  }
+
+  &__video {
+    z-index: 2;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .play-btn {
+    z-index: 1;
+  }
+
+  &__stats {
+    position: absolute;
+    left: 50%;
+    bottom: fluid(24, 60);
+    z-index: 1;
+    width: min(70%, 900px);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  &__media.is-playing + &__stats {
+    display: none;
+  }
+
+  // Stats move below the video instead of squeezing over it
+  @include respond-to(md) {
+    &__media {
+      aspect-ratio: 16 / 9;
+    }
+
+    &__stats,
+    &__media.is-playing + &__stats {
+      position: static;
+      display: grid;
+      width: 100%;
+      padding: 24px 12px;
+      transform: none;
+    }
+  }
+}
+
+// =============================================================
+// PROJECTS
+// =============================================================
+.projects {
+  overflow: hidden;
+
+  // Dot cluster right of the heading, overlapping the top of the cards
+  &__deco {
+    top: 119px;
+    left: calc(50% + 195px);
+  }
+
+  &__head {
+    align-items: flex-end;
+
+    .section-heading {
+      max-width: 900px;
+    }
+
+    @include respond-to(md) {
+      .heading-row__tag {
+        order: 0;
+      }
+    }
+  }
+
+  &__track {
+    --gutter: #{fluid($gutter-min, $gutter-max)};
+    display: flex;
+    gap: 8px;
+    padding-inline: max(var(--gutter), calc((100% - #{$container-max}) / 2));
+    scroll-padding-inline: max(var(--gutter), calc((100% - #{$container-max}) / 2));
+    cursor: grab;
+  }
+
+  // Arrows + dots under the cards (js/components/projects.js; hidden without JS)
+  &__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 28px;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &__dots {
+    margin: 0;
+  }
+}
+
+// "‹ DRAG ›" badge (design: circle over the project photo). Centred in the photo area
+// above the text panel; never catches the pointer, so links stay clickable.
+.drag-badge {
+  position: absolute;
+  top: var(--badge-y, 36%); // middle of the photo area above the text panel (set by projects.js)
+  left: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: fluid(96, 136);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(35, 38, 45, 0.6);
+  backdrop-filter: blur(6px);
+  color: $color-white;
+  font-size: fluid(13, 16);
+  font-weight: $weight-medium;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+  transition: opacity 0.3s $ease, transform 0.3s $ease;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+}
+
+// One card is open (wide) at a time; hover / focus / arrows / dots move
+// `is-active` (js/components/projects.js) and the others shrink back.
+$project-shift: 0.6s;
+
+.project-card {
+  --card-w: clamp(280px, 30vw, 560px);
+  --card-w-open: clamp(300px, 52vw, 1160px);
+  position: relative;
+  flex: 0 0 var(--card-w);
+  height: calc(var(--card-w) * 640 / 556);
+  overflow: hidden;
+  color: $color-white;
+  background: $color-dark;
+  transition: flex-basis $project-shift $ease;
+
+  &.is-active {
+    flex-basis: var(--card-w-open);
+  }
+
+  > img {
+    position: absolute;
+    inset: 0;
+    @include cover-image;
+    @include transition(transform);
+    transition-duration: $duration-slow;
+  }
+
+  &__panel {
+    position: absolute;
+    left: fluid(12, 40);
+    bottom: fluid(12, 40);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 20px;
+    width: min(calc(100% - 2 * #{fluid(12, 40)}), 830px);
+    padding: fluid(16, 32) fluid(16, 40);
+    background: rgba(70, 72, 78, 0.72);
+    backdrop-filter: blur(10px);
+
+    > * {
+      grid-column: 1;
+    }
+  }
+
+  &__cat {
+    font-size: fluid(13, 16);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    font-size: fluid(20, 28);
+    font-weight: $weight-semibold;
+    line-height: 1.25;
+  }
+
+  &__loc {
+    font-size: 15px;
+  }
+
+  // Shown only on the open card: slides open after the card has widened
+  &__text {
+    max-width: 52ch;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    @include p1;
+    color: #e5e6e8;
+    transition: max-height 0.3s $ease, margin-top 0.3s $ease, opacity 0.2s $ease;
+  }
+
+  &.is-active &__text {
+    max-height: 260px; // ~10 lines of P1 text
+    margin-top: 12px;
+    opacity: 1;
+    transition: max-height 0.4s $ease 0.25s, margin-top 0.4s $ease 0.25s, opacity 0.4s $ease 0.35s;
+  }
+
+  &__link {
+    grid-column: 2;
+    grid-row: 1 / span 10;
+    align-self: end;
+    font-size: 15px;
+    text-underline-offset: 4px;
+    white-space: nowrap;
+  }
+
+  @include hover {
+    > img {
+      transform: scale(1.04);
+    }
+
+    .drag-badge {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  // Touch: shown on the card being touched/swiped (js/components/projects.js)
+  &.is-touching .drag-badge {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &__text,
+    &.is-active &__text,
+    .drag-badge {
+      transition: none;
+    }
+  }
+
+  // Small laptops: link moves under the text so titles keep their width
+  @include respond-to(lg) {
+    &__panel {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__link {
+      grid-column: 1;
+      grid-row: auto;
+      margin-top: 10px;
+    }
+  }
+
+  // Tablets / phones: equal cards, every card shows its text
+  @include respond-to(md) {
+    &,
+    &.is-active {
+      flex-basis: min(84vw, 460px);
+      height: auto;
+      aspect-ratio: 4 / 5;
+    }
+
+    &__panel {
+      right: fluid(12, 40);
+      width: auto;
+    }
+
+    &__text,
+    &.is-active &__text {
+      max-height: none;
+      margin-top: 12px;
+      opacity: 1;
+      @include line-clamp(4);
+    }
+  }
+}
+
+// =============================================================
+// PARTNERSHIP
+// =============================================================
+.partner {
+  overflow: hidden;
+
+  &__deco {
+    top: 203px;
+    left: -47px;
+  }
+
+  &__deco-arcs {
+    bottom: 17px;
+    right: -95px;
+  }
+
+  &__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 0.64fr) minmax(0, 1fr);
+    max-width: 1640px;
+    margin-inline: auto;
+
+    @include respond-to(md) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__panel {
+    padding: fluid(36, 110) fluid(20, 98);
+    background: $gradient-panel;
+    color: $color-white;
+
+    .section-heading__eyebrow::before {
+      background: $color-white;
+    }
+  }
+
+  &__list {
+    margin-top: fluid(28, 80);
+    font-size: fluid(15, 18);
+  }
+
+  &__form {
+    padding: fluid(28, 80) fluid(18, 92);
+    background: #f8f8f8;
+    border: 1px solid $color-border-light;
+    border-left: 0;
+
+    @include respond-to(md) {
+      border-left: 1px solid $color-border-light;
+      border-top: 0;
+    }
+  }
+}
+
+// Segmented radio control (Importers / Distributors / Businesses)
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 fluid(28, 56);
+  padding: 0;
+  border: 0;
+
+  &__option {
+    position: relative;
+    cursor: pointer;
+
+    input {
+      @include visually-hidden;
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 8px fluid(14, 36);
+      border: 1px solid $color-border;
+      background: $color-white;
+      font-size: fluid(13, 16);
+      font-weight: $weight-medium;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      @include transition(border-color, color, box-shadow);
+    }
+
+    @include hover {
+      span {
+        border-color: $color-dark;
+      }
+    }
+
+    input:checked + span {
+      border-color: $color-primary;
+      box-shadow: inset 0 0 0 1px $color-primary;
+      color: $color-primary-text;
+    }
+
+    input:focus-visible + span {
+      @include focus-ring;
+    }
+  }
+}

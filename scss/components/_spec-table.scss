@@ -1,0 +1,72 @@
+@use '../abstracts' as *;
+
+// Sizes & specifications table. Scrolls inside its own box on small screens,
+// so the page itself never scrolls horizontally.
+.table-wrap {
+  overflow-x: auto;
+  border: $border;
+  -webkit-overflow-scrolling: touch;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.spec-table {
+  width: 100%;
+  min-width: 560px;
+  font-size: fluid-token($fs-small);
+  background: $color-white;
+
+  caption {
+    padding: 14px 20px;
+    text-align: left;
+    font-weight: $weight-semibold;
+    background: $color-light;
+    border-bottom: $border;
+  }
+
+  th,
+  td {
+    padding: 14px 20px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid $color-border-light;
+  }
+
+  thead th {
+    background: $color-dark;
+    color: $color-white;
+    font-weight: $weight-medium;
+    letter-spacing: 0.02em;
+  }
+
+  tbody th {
+    width: 32%;
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+}
+
+// Colour swatch inside tables
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: var(--swatch, #111);
+  }
+}

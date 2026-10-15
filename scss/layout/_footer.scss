@@ -1,0 +1,139 @@
+@use '../abstracts' as *;
+
+// Footer layout (structure), measured from the Figma homepage (1920px frame).
+// Footer link/list styling lives in components/_footer.scss.
+$footer-line: #313131;
+
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  background: $color-dark;
+  color: $color-white;
+
+  // Corner patterns: triangles top-left, dot cluster bottom-right
+  &__deco-tl {
+    top: 0;
+    left: -4px;
+
+    // Keep the small corner accent on tablets/phones too, scaled down
+    @include respond-to(md) {
+      &.deco {
+        display: block;
+        width: 110px;
+        height: 110px;
+      }
+    }
+  }
+
+  &__deco-br {
+    right: 2px;
+    bottom: 41px;
+  }
+
+  &__top {
+    display: grid;
+    justify-items: center;
+    padding-block: fluid(32, 40) fluid(32, 50);
+    border-bottom: 1px solid $footer-line;
+  }
+
+  &__logo {
+    width: fluid(170, 230);
+  }
+
+  // Four columns divided by thin lines; widths 340/426/457/497 and text insets from the design
+  &__columns {
+    display: grid;
+    grid-template-columns: 340fr 426fr 457fr 497fr;
+    border-bottom: 1px solid $footer-line;
+
+    @include respond-to(lg) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include respond-to(xs) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__col {
+    padding-block: fluid(32, 59) fluid(32, 47);
+
+    // Percent padding = share of the column width, so the insets scale with it
+    &:nth-child(1) {
+      padding-inline: 1.5% 24px;
+    }
+
+    &:nth-child(2) {
+      padding-inline: 29.3% 24px;
+    }
+
+    &:nth-child(3) {
+      padding-inline: 17.3% 24px;
+    }
+
+    &:nth-child(4) {
+      padding-inline: 15.1% 1.4%;
+    }
+
+    & + & {
+      border-left: 1px solid $footer-line;
+    }
+
+    @include respond-to(lg) {
+      &:nth-child(n) {
+        padding-inline: 0;
+      }
+
+      &:nth-child(odd) {
+        padding-right: 24px;
+      }
+
+      &:nth-child(even) {
+        padding-left: 24px;
+      }
+
+      &:nth-child(3) {
+        border-left: 0;
+      }
+
+      &:nth-child(n + 3) {
+        border-top: 1px solid $footer-line;
+      }
+    }
+
+    @include respond-to(xs) {
+      &:nth-child(n) {
+        padding-inline: 0;
+        border-left: 0;
+      }
+
+      & + & {
+        border-top: 1px solid $footer-line;
+      }
+    }
+  }
+
+  &__bottom {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px 32px;
+    padding-block: fluid(24, 39);
+    font-size: fluid(15, 18);
+
+    > :last-child {
+      justify-self: end;
+    }
+
+    @include respond-to(lg) {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      text-align: center;
+
+      > :last-child {
+        justify-self: center;
+      }
+    }
+  }
+}

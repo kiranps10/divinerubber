@@ -1,0 +1,77 @@
+@use 'sass:math';
+@use '../abstracts' as *;
+
+// Subtle hover zoom for static content photos that have no zoom of their own.
+// (Cards such as product, post, gallery, industry and project cards already zoom in
+// their own components; hero slides, page-banner/CTA backgrounds, logos and icons are
+// deliberately left out.)
+//
+// No wrapper needed: the image scales up while a matching clip-path inset trims it
+// back to its original box, so it never spills over neighbouring content or shifts
+// the layout. inset = (scale − 1) / (2 × scale) keeps the visible area the same size.
+$zoom-scale: 1.05;
+$zoom-inset: math.percentage(math.div($zoom-scale - 1, 2 * $zoom-scale));
+$zoom-time: 0.8s;
+
+@mixin zoom-ready {
+  clip-path: inset(0);
+  transition: scale $zoom-time $ease, clip-path $zoom-time $ease;
+}
+
+@mixin zoom-in {
+  scale: $zoom-scale;
+  clip-path: inset($zoom-inset);
+}
+
+// trigger (hovered element) → photo inside it ('' = the trigger is the photo itself)
+$zoom-targets: (
+  '.facility-feature__media': 'img',
+  '.facility-photos figure': 'img',
+  '.focus-card': '> img',
+  '.industry-detail': '.industry-detail__media img',
+  '.machine-card': '.machine-card__media img',
+  '.pd-media': 'img',
+  '.media-video:not(.is-playing)': '.video-feature__poster',
+  '.about-collage__main': '',
+  '.about-collage__front': '',
+  '.article-header__image': '',
+  '.io-images > img': '',
+  '.split__media:not(.media-video) > img': '',
+  '.test-images > img': '',
+  '.prose img': ''
+);
+
+@each $trigger, $image in $zoom-targets {
+  $img: $trigger;
+  @if $image != '' {
+    $img: '#{$trigger} #{$image}';
+  }
+
+  #{$img} {
+    @include zoom-ready;
+  }
+
+  #{$trigger} {
+    @include hover {
+      @if $image == '' {
+        @include zoom-in;
+      } @else {
+        #{$image} {
+          @include zoom-in;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{$img} {
+      scale: none !important;
+      clip-path: none !important;
+    }
+  }
+}
+
+// Keyboard users opening the product lightbox get the same cue
+.pd-media:focus-visible img {
+  @include zoom-in;
+}

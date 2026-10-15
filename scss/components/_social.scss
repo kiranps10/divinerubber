@@ -1,0 +1,54 @@
+@use '../abstracts' as *;
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  a {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    color: $color-white;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    @include transition(background-color, border-color, color);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    @include hover {
+      background: $color-primary;
+      border-color: $color-primary;
+    }
+  }
+}
+
+// Icon checklist (design: partnership panel)
+.check-list {
+  display: grid;
+  gap: 18px;
+
+  li {
+    @include p1; // bullet points use the same P1 style as paragraphs
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    margin-top: 4px; // centred on the first 26px line
+  }
+}
+
+// Inline svg sizing helper
+.icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}

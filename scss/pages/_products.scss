@@ -1,0 +1,16 @@
+@use '../abstracts' as *;
+
+// Product listing page — cards are the shared flip card (components/_flip-card.scss)
+// in a .grid--4 (4 / 3 / 2 / 1 columns).
+.flip-grid {
+  // Filtered-out products
+  > [hidden] {
+    display: none;
+  }
+}
+
+// "Mats for Every Space" heading: the intro uses the full row (the shared
+// .section-heading is capped at 980px) — one line on wide screens. Products page only.
+.page--products .section-heading--wide {
+  max-width: none;
+}

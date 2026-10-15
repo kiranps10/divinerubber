@@ -1,0 +1,45 @@
+{
+  "name": "divine-rubber-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Divine Rubber static website (HTML + SCSS + vanilla JS).",
+  "scripts": {
+    "sass": "sass scss/main.scss css/main.css --no-source-map",
+    "sass:min": "sass scss/main.scss css/main.min.css --no-source-map --style=compressed",
+    "sass:watch": "sass --watch scss/main.scss css/main.css",
+    "partials": "node tools/build-partials.js",
+    "images": "node tools/optimize-images.js",
+    "build": "npm run partials && npm run sass && npm run sass:min",
+    "serve": "node tools/serve.js",
+    "dev": "npm run build && npm run serve",
+    "products": "node tools/build-product-list.js && node tools/build-product-pages.js && npm run partials",
+    "validate": "html-validate *.html",
+    "qa:pages": "node tools/qa-check.js qa-screens all 1920,1366,1024,768,390",
+    "qa:zoom": "node tools/qa-check.js qa-screens all x --zoom --no-shots",
+    "qa:interactions": "node tools/qa-interactions.js",
+    "qa:a11y": "node tools/qa-a11y.js",
+    "qa:links": "node tools/qa-links.js",
+    "qa": "npm run validate && npm run qa:links && npm run qa:interactions && npm run qa:a11y && npm run qa:cta && npm run qa:header && npm run qa:logo && npm run qa:type && node tools/qa-check.js qa-screens all 1920,1366,1024,768,390 --no-shots",
+    "qa:cta": "node tools/qa-cta-arrow.js",
+    "qa:header": "node tools/qa-header-scroll.js",
+    "qa:logo": "node tools/qa-logo-align.js",
+    "qa:type": "node tools/qa-typography.js",
+    "posts": "node tools/build-posts.js && npm run partials"
+  },
+  "devDependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
+    "axe-core": "^4.14.0",
+    "ffmpeg-static": "^5.3.0",
+    "flag-icons": "^7.5.0",
+    "html-validate": "^11.16.2",
+    "libphonenumber-js": "^1.13.15",
+    "lighthouse": "^13.5.0",
+    "puppeteer-core": "^25.13.0",
+    "sass": "^1.105.1",
+    "sharp": "^0.35.5"
+  },
+  "allowScripts": {
+    "ffmpeg-static@5.3.0": true
+  }
+}

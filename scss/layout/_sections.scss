@@ -1,0 +1,200 @@
+@use '../abstracts' as *;
+
+// Generic section wrapper — height always comes from content + fluid padding.
+.section {
+  position: relative;
+  padding-block: fluid-token($space-section);
+
+  &--sm {
+    padding-block: fluid-token($space-section-sm);
+  }
+
+  &--flush-top {
+    padding-top: 0;
+  }
+
+  &--flush-bottom {
+    padding-bottom: 0;
+  }
+
+  &--light {
+    background: $color-light;
+  }
+
+  &--dark {
+    background: $color-dark;
+    color: $color-white;
+  }
+
+  // Very light grey — a softer step away from a white section
+  &--grey {
+    background: $color-grey-soft;
+  }
+
+  // Two light sections in a row would merge; keep spacing natural
+  &--light + &--light,
+  &:not(&--light):not(&--dark):not(&--grey) + &:not(&--light):not(&--dark):not(&--grey) {
+    padding-top: 0;
+  }
+
+  &__header {
+    margin-bottom: fluid-token($space-block);
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-top: fluid-token($space-block);
+  }
+}
+
+// Text + media split (used on many inner pages)
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: fluid(32, 96);
+  align-items: center;
+
+  &--top {
+    align-items: start;
+  }
+
+  &--wide-media {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  &--reverse > :first-child {
+    order: 2;
+  }
+
+  @include respond-to(md) {
+    &,
+    &--wide-media {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    // On stacked layouts, text always comes first
+    &--reverse > :first-child {
+      order: 0;
+    }
+  }
+
+  &__body > * + * {
+    margin-top: 1.1em;
+  }
+
+  // Plain body paragraphs in text/media splits → P1
+  &__body > p {
+    @include p1;
+  }
+
+  &__media {
+    position: relative;
+
+    img {
+      @include cover-image;
+      aspect-ratio: 4 / 3;
+    }
+  }
+}
+
+// Decorative pattern accents — SVGs exported from the Figma file (assets/images/deco/),
+// shown at their design size and colour. Placement per section lives in pages/_home.scss.
+.deco {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  background: no-repeat 0 0 / 100% 100%;
+
+  @include respond-to(md) {
+    display: none;
+  }
+
+  // Concentric arcs (grey on white / white on light grey)
+  &--arcs {
+    width: 196px;
+    height: 127px;
+    background-image: url('../assets/images/deco/arcs.svg');
+  }
+
+  // Interlocking circles
+  &--circles {
+    width: 165px;
+    height: 162px;
+    background-image: url('../assets/images/deco/circles.svg');
+  }
+
+  // Round dot clusters
+  &--dots-round {
+    width: 125px;
+    height: 200px;
+    background-image: url('../assets/images/deco/dots-round.svg');
+  }
+
+  &--dots-cluster {
+    width: 200px;
+    height: 170px;
+    background-image: url('../assets/images/deco/dots-cluster.svg');
+  }
+
+  &--dots-footer {
+    width: 79px;
+    height: 199px;
+    background-image: url('../assets/images/deco/dots-footer.svg');
+  }
+
+  // Diagonal stripes
+  &--stripes {
+    width: 140px;
+    height: 140px;
+    background-image: url('../assets/images/deco/stripes.svg');
+  }
+
+  // Triangle staircases
+  &--triangles-dark {
+    width: 172px;
+    height: 171px;
+    background-image: url('../assets/images/deco/triangles-dark.svg');
+  }
+
+  &--triangles-light {
+    width: 172px;
+    height: 171px;
+    background-image: url('../assets/images/deco/triangles-light.svg');
+  }
+
+  &--triangles-footer {
+    width: 164px;
+    height: 164px;
+    background-image: url('../assets/images/deco/triangles-footer.svg');
+  }
+
+  // Placement
+  &--tl {
+    top: 0;
+    left: 0;
+  }
+
+  &--tr {
+    top: 0;
+    right: 0;
+  }
+
+  &--bl {
+    bottom: 0;
+    left: 0;
+  }
+
+  &--br {
+    bottom: 0;
+    right: 0;
+  }
+}
+
+// Content always sits above the patterns
+.deco ~ :not(.deco) {
+  position: relative;
+  z-index: 1;
+}

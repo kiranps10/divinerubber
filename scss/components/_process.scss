@@ -1,0 +1,263 @@
+@use '../abstracts' as *;
+
+// Numbered process flow (manufacturing process, QA stages)
+.process {
+  display: grid;
+  grid-template-columns: repeat(var(--steps, 6), minmax(0, 1fr));
+  gap: fluid(14, 24);
+  counter-reset: step;
+
+  &--4 {
+    --steps: 4;
+  }
+
+  &--5 {
+    --steps: 5;
+  }
+
+  @include respond-to(lg) {
+    --steps: 3;
+
+    &--4 {
+      --steps: 2;
+    }
+  }
+
+  @include respond-to(sm) {
+    &,
+    &--4,
+    &--5 {
+      --steps: 1;
+      gap: 0;
+    }
+  }
+
+  &__step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 30px;
+    counter-increment: step;
+
+    // Connector line
+    &::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: calc(fluid(14, 24) * -1);
+      height: 1px;
+      background: $color-border;
+    }
+
+    &:last-child::before {
+      right: 0;
+    }
+
+    &::after {
+      content: counter(step, decimal-leading-zero);
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      background: $color-primary;
+      color: $color-white;
+      font-size: 11px;
+      font-weight: $weight-bold;
+    }
+
+    // Mobile: vertical line on the left
+    @include respond-to(sm) {
+      padding: 0 0 28px 44px;
+
+      &::before {
+        top: 0;
+        bottom: 0;
+        left: 10px;
+        right: auto;
+        width: 1px;
+        height: auto;
+      }
+
+      &:last-child::before {
+        bottom: auto;
+        height: 22px;
+      }
+    }
+  }
+
+  &__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: $color-light;
+
+    img {
+      @include cover-image;
+    }
+  }
+
+  // Gradient outline icon (assets/icons/features/)
+  &__icon {
+    display: block;
+    width: fluid(40, 50);
+    height: fluid(40, 50);
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+
+  &__text {
+    @include p1;
+    color: $color-muted;
+  }
+
+  // On dark sections
+  &--light-text {
+    .process__title {
+      color: $color-white;
+    }
+
+    .process__text {
+      color: $color-muted-on-dark;
+    }
+
+    .process__step::before {
+      background: rgba(255, 255, 255, 0.18);
+    }
+  }
+}
+
+// Timeline variant (About › Manufacturing Excellence, reference design):
+// large numbered badges on one horizontal line, a dashed drop to a big outline
+// icon, then title + text. Badge and icon share one vertical axis.
+.process--timeline {
+  --badge-w: #{fluid(64, 85)};
+  --badge-h: #{fluid(60, 80)};
+  --axis: calc(var(--badge-w) / 2 + #{fluid(16, 25)}); // badge/icon centre, from the column's left edge
+  --icon: #{fluid(60, 80)};
+  gap: fluid(14, 24);
+
+  // Text hangs slightly left of the badges, so the badges line up with the heading
+  @include respond-above(lg) {
+    margin-left: calc(#{fluid(16, 25)} * -1);
+  }
+
+  .process__step {
+    gap: 0;
+    padding-top: calc(var(--badge-h) + #{fluid(34, 45)});
+
+    // Horizontal line through the badge centres, running on to the next badge
+    &::before {
+      top: calc(var(--badge-h) / 2);
+      left: var(--axis);
+      right: calc((#{fluid(14, 24)} + var(--axis)) * -1);
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    &:last-child::before {
+      right: 0;
+    }
+
+    // Number badge
+    &::after {
+      left: calc(var(--axis) - var(--badge-w) / 2);
+      z-index: 1;
+      width: var(--badge-w);
+      height: var(--badge-h);
+      border-radius: 6px;
+      font-size: fluid(24, 34);
+      font-weight: $weight-bold;
+      letter-spacing: 0.01em;
+    }
+  }
+
+  // Icon on the badge axis, with a dashed drop line from the badge
+  .process__icon {
+    position: relative;
+    width: var(--icon);
+    height: var(--icon);
+    margin-left: calc(var(--axis) - var(--icon) / 2);
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + #{fluid(8, 10)});
+      left: 50%;
+      height: fluid(22, 32);
+      border-left: 1px dashed rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  .process__title {
+    margin-top: fluid(20, 30);
+    font-size: fluid(20, 24);
+  }
+
+  .process__text {
+    max-width: 30ch;
+    margin-top: fluid(10, 14);
+  }
+
+  // Small laptops / tablets: 3 per row, the line stops at the end of each row
+  @include respond-to(lg) {
+    row-gap: fluid(40, 56);
+
+    .process__step:nth-child(3n)::before {
+      right: 0;
+    }
+  }
+
+  // Phones: one column, a vertical line joins the badges; content sits beside them
+  @include respond-to(sm) {
+    --badge-w: 56px;
+    --badge-h: 52px;
+    --icon: 48px;
+    gap: 0;
+
+    .process__step {
+      padding: 0 0 32px calc(var(--badge-w) + 20px);
+
+      &::before {
+        top: calc(var(--badge-h) / 2);
+        bottom: 0;
+        left: calc(var(--badge-w) / 2);
+        right: auto;
+        width: 1px;
+        height: auto;
+      }
+
+      &:last-child::before {
+        display: none;
+      }
+
+      &::after {
+        left: 0;
+        font-size: 22px;
+      }
+    }
+
+    .process__icon {
+      margin-left: 0;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    .process__title {
+      margin-top: 14px;
+    }
+  }
+}

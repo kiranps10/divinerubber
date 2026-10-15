@@ -1,0 +1,348 @@
+@use '../abstracts' as *;
+
+// Underlined fields as in the design ("Let's Build Better Flooring Together")
+.form {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: fluid(20, 34) fluid(20, 36);
+
+    @include respond-to(xs) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__full {
+    grid-column: 1 / -1;
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: fluid(28, 40);
+  }
+
+  &__note {
+    font-size: 14px;
+    color: $color-muted;
+  }
+
+  // Spam honeypot — hidden from people, visible to bots
+  &__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+}
+
+.field {
+  position: relative;
+  display: grid;
+  gap: 6px;
+
+  &__label {
+    font-size: 16px;
+    color: $color-body;
+
+    .req {
+      color: $color-error;
+    }
+  }
+
+  &__input {
+    width: 100%;
+    min-height: 46px;
+    padding: 8px 0;
+    border: 0;
+    border-bottom: 1px solid $color-border;
+    border-radius: 0;
+    background: transparent;
+    font-size: 16px;
+    color: $color-heading;
+    @include transition(border-color, box-shadow);
+
+    &::placeholder {
+      color: #8a8d92;
+    }
+
+    &:focus {
+      outline: none;
+      border-bottom-color: $color-primary;
+      box-shadow: 0 1px 0 0 $color-primary;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    &[aria-invalid='true'] {
+      border-bottom-color: $color-error;
+      box-shadow: 0 1px 0 0 $color-error;
+    }
+  }
+
+  textarea.field__input {
+    min-height: 110px;
+    resize: vertical;
+  }
+
+  select.field__input {
+    appearance: none;
+    padding-right: 28px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 4px center;
+  }
+
+  &__error {
+    font-size: 14px;
+    color: $color-error;
+
+    &:empty {
+      display: none;
+    }
+
+    &::before {
+      content: '⚠ ';
+    }
+  }
+}
+
+// Boxed version (Contact page)
+.field--boxed .field__input {
+  padding-inline: 14px;
+  border: 1px solid $color-border;
+  background: $color-white;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 1px $color-primary;
+  }
+
+  &[aria-invalid='true'] {
+    border-color: $color-error;
+    box-shadow: 0 0 0 1px $color-error;
+  }
+}
+
+// Phone number with country code (Contact enquiry form): flag + dialling code
+// picker and number in one boxed control. The native <select> sits invisibly over
+// the flag/code display, so it keeps native keyboard, touch and screen-reader
+// behaviour (js/components/phone-input.js fills the country list).
+.phone-input {
+  display: flex;
+  align-items: stretch;
+  min-height: 46px;
+  border: 1px solid $color-border;
+  background: $color-white;
+  @include transition(border-color, box-shadow);
+
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 1px $color-primary;
+  }
+
+  &:has([aria-invalid='true']) {
+    border-color: $color-error;
+    box-shadow: 0 0 0 1px $color-error;
+  }
+
+  &__country {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 0 12px 0 14px;
+    border-right: 1px solid $color-border;
+    background: #f7f9fa;
+    font-size: 16px;
+    color: $color-heading;
+
+    // Keyboard focus on the hidden select shows on the visible part
+    &:has(:focus-visible) {
+      outline: 2px solid $color-primary;
+      outline-offset: -2px;
+    }
+  }
+
+  &__flag {
+    width: 24px;
+    height: 18px;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  }
+
+  &__code {
+    min-width: 3.2ch;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__chevron {
+    width: 12px;
+    height: 12px;
+    color: $color-muted;
+  }
+
+  &__select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    font-size: 16px; // no zoom-on-focus on iOS
+  }
+
+  // The number box drops its own border — the wrapper draws it
+  .field__input.phone-input__number {
+    flex: 1;
+    min-width: 0;
+    min-height: 0; // the wrapper sets the height, so the control matches the other fields
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+// Searchable dropdown (Contact "Country"): text input + listbox popup with flags.
+// js/components/country-combobox.js adds .is-enhanced; without it this is a plain input.
+.combobox {
+  position: relative;
+
+  &__flag,
+  &__chevron {
+    display: none;
+  }
+
+  &.is-enhanced {
+    .combobox__flag {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      display: block;
+      width: 20px;
+      height: 15px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+      transform: translateY(-50%);
+      pointer-events: none;
+
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    .combobox__chevron {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      display: block;
+      width: 12px;
+      height: 12px;
+      color: $color-muted;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
+    .combobox__input {
+      padding-right: 38px;
+    }
+
+    // room for the flag (only when a country is matched)
+    &:has(.combobox__flag:not([hidden])) .combobox__input {
+      padding-left: 44px;
+    }
+  }
+
+  &__list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: min(300px, 50vh);
+    margin: 0;
+    padding: 6px 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    background: $color-white;
+    border: 1px solid $color-border;
+    box-shadow: $shadow-card;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px; // comfortable touch target
+    padding: 8px 14px;
+    font-size: 16px;
+    color: $color-heading;
+    cursor: pointer;
+
+    img {
+      flex-shrink: 0;
+      width: 20px;
+      height: 15px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+    }
+
+    &[aria-selected='true'] {
+      font-weight: $weight-semibold;
+      color: $color-primary-text;
+    }
+
+    &.is-active {
+      background: #e8f3f9;
+    }
+
+    @include hover {
+      background: #f1f7fa;
+    }
+  }
+
+  &__empty {
+    padding: 10px 14px;
+    font-size: 15px;
+    color: $color-muted;
+  }
+}
+
+// Honest status message under the form
+.form-status {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border-left: 4px solid currentColor;
+  font-size: 15px;
+
+  &:empty {
+    display: none;
+  }
+
+  &--success {
+    color: $color-success;
+    background: #eaf6ef;
+  }
+
+  &--error {
+    color: $color-error;
+    background: #fdeceb;
+  }
+
+  &--info {
+    color: $color-primary-text;
+    background: #e8f3f9;
+  }
+
+  a {
+    font-weight: $weight-semibold;
+  }
+}

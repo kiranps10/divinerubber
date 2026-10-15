@@ -1,0 +1,21 @@
+@use 'sass:math';
+@use 'sass:list';
+
+// px → rem
+@function rem($px) {
+  @return math.div($px, 16) * 1rem;
+}
+
+// Fluid value between two px sizes across the viewport range.
+// fluid(16, 18) → clamp(1rem, …vw, 1.125rem)
+@function fluid($min, $max, $min-vw: 375, $max-vw: 1920) {
+  $slope: math.div($max - $min, $max-vw - $min-vw);
+  $intercept: $min - $slope * $min-vw;
+  $vw: math.div(math.round($slope * 100 * 1000), 1000);
+  @return clamp(#{rem($min)}, #{rem($intercept)} + #{$vw}vw, #{rem($max)});
+}
+
+// Accepts a (min, max) pair token from _variables.scss
+@function fluid-token($pair) {
+  @return fluid(list.nth($pair, 1), list.nth($pair, 2));
+}

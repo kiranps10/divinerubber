@@ -1,0 +1,50 @@
+@use '../abstracts' as *;
+
+// Responsive card grids. Column count steps down at central breakpoints.
+.grid {
+  display: grid;
+  gap: fluid-token($space-gap);
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+
+  &--2 {
+    --cols: 2;
+  }
+
+  &--3 {
+    --cols: 3;
+  }
+
+  &--4 {
+    --cols: 4;
+  }
+
+  &--tight {
+    gap: 10px;
+  }
+
+  @include respond-to(lg) {
+    &--4 {
+      --cols: 3;
+    }
+  }
+
+  @include respond-to(md) {
+    &--3,
+    &--4 {
+      --cols: 2;
+    }
+  }
+
+  @include respond-to(xs) {
+    &--2,
+    &--3,
+    &--4 {
+      --cols: 1;
+    }
+
+    // Small image tiles stay 2-up on phones
+    &--keep-2 {
+      --cols: 2;
+    }
+  }
+}

@@ -1,0 +1,111 @@
+@use '../abstracts' as *;
+
+// <div class="section-heading">
+//   <span class="section-heading__eyebrow">Product Range</span>
+//   <h2 class="section-heading__title">Explore…</h2>
+//   <p class="section-heading__intro">…</p>
+// </div>
+// Works the same whether the title is h1, h2, h3…
+.section-heading {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+
+  &__eyebrow {
+    @include eyebrow-text;
+    display: block;
+    color: $color-black;
+
+    &::before {
+      @include accent-bar(16px, 6px);
+      margin-bottom: fluid(14, 26);
+    }
+  }
+
+  &__title {
+    margin-top: fluid(8, 14);
+    font-family: $font-heading;
+    font-size: fluid-token($fs-h1);
+    font-weight: $weight-regular;
+    line-height: $lh-heading;
+    color: $color-heading;
+    text-wrap: balance;
+  }
+
+  &__intro {
+    margin-top: fluid(14, 22);
+    @include p1;
+    color: $color-muted;
+    text-wrap: pretty;
+  }
+
+  // Centered version (Product Range, Milestones…)
+  &--center {
+    margin-inline: auto;
+    text-align: center;
+
+    .section-heading__eyebrow::before {
+      margin-inline: auto;
+      width: 6px;
+      height: 16px;
+    }
+  }
+
+  // White text on dark sections
+  &--light {
+    .section-heading__eyebrow,
+    .section-heading__title {
+      color: $color-white;
+    }
+
+    .section-heading__intro {
+      color: $color-muted-on-dark;
+    }
+  }
+
+  &--sm .section-heading__title {
+    font-size: fluid-token($fs-h2);
+  }
+}
+
+// Heading on the left, action/eyebrow on the right with a hairline (design: "Our Categories")
+.heading-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-bottom: fluid-token($space-block);
+
+  &__line {
+    flex: 1;
+    align-self: center;
+    height: 1px;
+    background: $color-border-light;
+  }
+
+  &__tag {
+    @include eyebrow-text;
+    display: inline-flex;
+    align-items: center;
+    gap: 22px;
+    align-self: center;
+    white-space: nowrap;
+
+    &::before {
+      @include accent-bar(6px, 18px);
+    }
+  }
+
+  @include respond-to(md) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__line {
+      display: none;
+    }
+
+    &__tag {
+      order: -1;
+    }
+  }
+}

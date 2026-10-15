@@ -1,0 +1,632 @@
+@use '../abstracts' as *;
+
+// ---------------------------------------------------------------
+// Industry card — greyscale photo with label (design: Our Categories)
+// ---------------------------------------------------------------
+.industry-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 307 / 329;
+  color: $color-white;
+  text-decoration: none;
+  background: $color-dark;
+
+  img {
+    @include cover-image;
+    filter: grayscale(1);
+    @include transition(transform, filter);
+    transition-duration: $duration-slow;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $overlay-image;
+  }
+
+  &__label {
+    position: absolute;
+    left: fluid(16, 38);
+    right: fluid(16, 38);
+    bottom: fluid(16, 36);
+    z-index: 1;
+    font-size: fluid(15, 20);
+    font-weight: $weight-medium;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  @include hover {
+    img {
+      filter: grayscale(0);
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Detailed industry card (Industries page): image + body
+.industry-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-white;
+  border: $border;
+
+  &__media {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+
+    img {
+      @include cover-image;
+    }
+  }
+
+  &__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    padding: fluid(34, 40) fluid(18, 24) fluid(18, 24);
+  }
+
+  // Small white icon badge overlapping the photo
+  &__icon {
+    position: absolute;
+    top: -24px;
+    left: fluid(18, 24);
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    background: $color-white;
+    box-shadow: $shadow-card;
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h3);
+    font-weight: $weight-medium;
+    line-height: 1.3;
+    color: $color-heading;
+  }
+
+  // Relevant products: separated area pinned to the bottom of the card, so the
+  // tag areas line up across a row whatever the title/description length
+  &__products {
+    display: grid;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid $color-border-light;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $color-primary-text;
+  }
+
+  &__all {
+    justify-self: start;
+    font-size: 14px;
+  }
+}
+
+// ---------------------------------------------------------------
+// Product tags — compact outlined pills linking to products/categories.
+// Wrap onto extra lines as needed. Gradient hover: components/_card-hover.scss
+// ---------------------------------------------------------------
+.product-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 5px 12px;
+  border: 1px solid rgba(1, 124, 177, 0.45);
+  border-radius: $radius-pill;
+  font-size: 14px;
+  font-weight: $weight-medium;
+  line-height: 1.2;
+  color: $color-primary-text;
+  text-decoration: none;
+
+  &:focus-visible {
+    @include focus-ring($color-primary, 2px);
+  }
+}
+
+// ---------------------------------------------------------------
+// Post card — blog & news listing
+// ---------------------------------------------------------------
+.post-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-white;
+  border: $border;
+  @include transition(box-shadow, border-color);
+
+  &__media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+
+    img {
+      @include cover-image;
+      @include transition(transform);
+      transition-duration: $duration-slow;
+    }
+  }
+
+  &__badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 1;
+    padding: 6px 12px;
+    background: $color-dark;
+    color: $color-white;
+    font-size: 12px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    padding: fluid(20, 30);
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 14px;
+    color: $color-muted;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    svg {
+      width: 14px;
+      height: 14px;
+      color: $color-primary;
+    }
+  }
+
+  &__title {
+    font-size: fluid(19, 23);
+    font-weight: $weight-medium;
+    line-height: 1.3;
+    color: $color-heading;
+  }
+
+  &__link {
+    text-decoration: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  &:focus-within {
+    @include focus-ring;
+  }
+
+  &__text {
+    @include line-clamp(3);
+    @include p1;
+  }
+
+  &__more {
+    margin-top: auto;
+    padding-top: 6px;
+  }
+
+  // Border, lift and shadow come from components/_card-hover.scss
+  @include hover {
+    .post-card__media img {
+      transform: scale(1.05);
+    }
+
+    .link-arrow svg {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Feature card — icon + title + text (USPs, benefits, QA steps)
+// ---------------------------------------------------------------
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: fluid(22, 36);
+  background: $color-white;
+  border: $border;
+
+  // Gradient outline icon (assets/icons/features/) — open, no box, as in the design
+  &__icon {
+    display: block;
+    width: fluid(42, 52);
+    height: fluid(42, 52);
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__step {
+    font-family: $font-heading;
+    font-size: fluid(30, 44);
+    line-height: 1;
+    color: $color-primary;
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    line-height: 1.3;
+    color: $color-heading;
+  }
+
+  &__text {
+    @include p1;
+    color: $color-muted;
+  }
+
+  &--dark {
+    background: $color-dark-2;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .feature-card__title {
+      color: $color-white;
+    }
+
+    .feature-card__text {
+      color: $color-muted-on-dark;
+    }
+  }
+
+  &--plain {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  // Row layout: icon | title + text | arrow (Industries "Why industries choose us").
+  // The title link stretches over the whole card.
+  &--row {
+    display: grid;
+    grid-template-columns: fluid(40, 48) minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: fluid(14, 20);
+    padding: fluid(20, 28);
+
+    .feature-card__icon {
+      width: fluid(40, 48);
+      height: fluid(40, 48);
+    }
+
+    .feature-card__text {
+      margin-top: 6px;
+    }
+  }
+
+  &__link {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  &:has(.feature-card__link:focus-visible) {
+    @include focus-ring($color-accent);
+  }
+
+  &__arrow {
+    width: 18px;
+    height: 18px;
+    color: $color-muted-on-dark;
+    @include transition(transform, color);
+  }
+}
+
+// ---------------------------------------------------------------
+// Machine card — image + name + description + purpose
+// ---------------------------------------------------------------
+.machine-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-white;
+  border: $border;
+
+  &__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+
+    img {
+      @include cover-image;
+    }
+  }
+
+  &__body {
+    display: grid;
+    gap: 10px;
+    padding: fluid(18, 28);
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+
+  &__purpose {
+    padding-top: 10px;
+    border-top: 1px solid $color-border-light;
+    font-size: 15px;
+    color: $color-muted;
+
+    strong {
+      color: $color-body;
+      font-weight: $weight-semibold;
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Photo placeholder — used where a genuine photo has not been supplied yet
+// ---------------------------------------------------------------
+.media-placeholder {
+  position: relative;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  padding: 20px;
+  text-align: center;
+  color: $color-muted-on-dark;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.07) 2px, transparent 2.5px) 0 0 / 18px 18px,
+    $color-dark;
+
+  &__code {
+    font-family: $font-heading;
+    font-size: fluid(22, 30);
+    color: $color-white;
+  }
+
+  &__note {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  // Light version for white product grids
+  &--light {
+    color: $color-muted;
+    background:
+      radial-gradient(circle, rgba(0, 0, 0, 0.07) 1.6px, transparent 2px) 0 0 / 16px 16px,
+      $color-light;
+
+    .media-placeholder__code {
+      color: $color-dark;
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Focus cards: image on top, text below (About, Industries)
+.focus-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-white;
+  border: $border;
+
+  > img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  &__body {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    padding: fluid(34, 46) fluid(20, 34) fluid(22, 34);
+  }
+
+  &__icon {
+    position: absolute;
+    top: -28px;
+    left: fluid(20, 34);
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    background: $color-white;
+    box-shadow: $shadow-card;
+
+    img {
+      width: 38px;
+      height: 38px;
+    }
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h3);
+    font-weight: $weight-medium;
+    color: $color-heading;
+  }
+
+  &__text {
+    @include p1;
+    color: $color-muted;
+  }
+}
+
+// ---------------------------------------------------------------
+// Benefit card — photo, round blue icon badge on the photo edge, title,
+// short blue rule, text (Industries "Applications & benefits")
+// ---------------------------------------------------------------
+.benefit-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $color-white;
+  border: $border;
+
+  &__media {
+    aspect-ratio: 5 / 2;
+    overflow: hidden;
+    background: $color-light;
+
+    img {
+      @include cover-image;
+    }
+  }
+
+  &__body {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    flex: 1;
+    padding: fluid(32, 36) fluid(18, 26) fluid(18, 24);
+    text-align: center;
+  }
+
+  // Round badge centred on the photo/content edge (keeps the photo's subject clear)
+  &__icon {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 4px solid $color-white;
+    border-radius: 50%;
+    background: $gradient-card-hover;
+    transform: translateX(-50%);
+
+    img {
+      width: 22px;
+      height: 22px;
+      filter: brightness(0) invert(1); // white icon on the blue badge
+    }
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h3);
+    font-weight: $weight-medium;
+    line-height: 1.3;
+    color: $color-heading;
+
+    // short blue rule under the title
+    &::after {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 2px;
+      margin: 8px auto 0;
+      background: $color-accent;
+    }
+  }
+
+  &__text {
+    @include p1;
+    color: $color-muted;
+  }
+}
+
+// ---------------------------------------------------------------
+// Certification / membership card (no third-party logos until supplied)
+// ---------------------------------------------------------------
+.cert-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  height: 100%;
+  padding: fluid(24, 40);
+  background: $color-white;
+  border: $border;
+  border-top: 3px solid $color-primary;
+
+  &__badge {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: $color-light;
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  &__title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
+
+  &__text {
+    @include p1;
+    color: $color-muted;
+  }
+}
+
+// Plain body paragraphs inside detail cards → P1
+.industry-detail__body > p:not([class]),
+.machine-card__body > p:not([class]) {
+  @include p1;
+}

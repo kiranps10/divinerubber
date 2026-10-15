@@ -1,0 +1,99 @@
+@use '../abstracts' as *;
+
+// Category filter tabs (products, blogs, news, gallery) and form-type tabs.
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: fluid-token($space-block);
+
+  // On phones, one swipeable row instead of a tall wrapped block
+  @include respond-to(sm) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter, 16px) * -1);
+    padding-inline: var(--gutter, 16px);
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  &__btn {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid $color-border;
+    background: $color-white;
+    font-size: 15px;
+    font-weight: $weight-medium;
+    letter-spacing: 0.02em;
+    color: $color-body;
+    scroll-snap-align: start;
+    @include transition(background-color, color, border-color);
+
+    @include hover {
+      border-color: $color-dark;
+    }
+
+    &[aria-selected='true'],
+    &[aria-pressed='true'] {
+      background: $color-dark;
+      border-color: $color-dark;
+      color: $color-white;
+    }
+  }
+
+  // Outlined variant (design: Importers / Distributors / Businesses)
+  &--outline &__btn {
+    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    &[aria-selected='true'],
+    &[aria-pressed='true'] {
+      background: transparent;
+      border-color: $color-primary;
+      color: $color-primary-text;
+      box-shadow: inset 0 0 0 1px $color-primary;
+    }
+  }
+
+  // Pill variant (Infrastructure gallery reference): soft grey pills, solid brand blue when active
+  &--pills &__btn {
+    min-height: 40px;
+    padding: 8px 20px;
+    border: 0;
+    border-radius: $radius-pill;
+    background: #eef2f5;
+    font-size: 14px;
+
+    @include hover {
+      background: #dfe9ef;
+      color: $color-primary-text;
+    }
+
+    &[aria-pressed='true'] {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+}
+
+// Filtered items fade in
+[data-filter-item] {
+  animation: fade-in 0.35s $ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.filter-empty {
+  @include p1;
+  padding: 40px 0;
+  text-align: center;
+  color: $color-muted;
+}

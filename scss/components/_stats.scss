@@ -1,0 +1,105 @@
+@use '../abstracts' as *;
+
+$stats-faded-line: #c4c7cc; // separator colour at its darkest (middle)
+
+// Stat counters (design: 50+ / 15+ / 100+ / 200+)
+.stats {
+  display: grid;
+  grid-template-columns: repeat(var(--stats-cols, 4), minmax(0, 1fr));
+
+  @include respond-to(sm) {
+    --stats-cols: 2;
+  }
+
+  &__item {
+    padding: 8px fluid(12, 32);
+    text-align: center;
+
+    & + & {
+      border-left: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    @include respond-to(sm) {
+      padding-block: 18px;
+
+      &:nth-child(odd) {
+        border-left: 0;
+      }
+
+      &:nth-child(n + 3) {
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+      }
+    }
+  }
+
+  &__value {
+    display: block;
+    font-size: fluid-token($fs-stat);
+    font-weight: $weight-regular;
+    line-height: 1.1;
+  }
+
+  &__label {
+    display: block;
+    margin-top: 6px;
+    font-size: fluid(14, 18);
+  }
+
+  // Light-background version
+  &--dark-text {
+    color: $color-heading;
+
+    .stats__item + .stats__item,
+    .stats__item:nth-child(n + 3) {
+      border-color: $color-border;
+    }
+
+    .stats__value {
+      color: $color-primary;
+    }
+
+    .stats__label {
+      color: $color-muted;
+    }
+  }
+
+  // Clean layout, no boxes/borders: thin separator lines that fade out at
+  // both ends. Opt-in modifier (used on About › What sets us apart).
+  &--faded {
+    .stats__item {
+      position: relative;
+      border: 0;
+    }
+
+    .stats__item + .stats__item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, $stats-faded-line 50%, transparent);
+    }
+
+    // 2 × 2 on tablets/phones: vertical line between columns, horizontal between rows
+    @include respond-to(sm) {
+      .stats__item + .stats__item::before {
+        content: none;
+      }
+
+      .stats__item:nth-child(even)::before {
+        content: '';
+      }
+
+      .stats__item:nth-child(n + 3)::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 8%;
+        right: 8%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, $stats-faded-line 50%, transparent);
+      }
+    }
+  }
+}

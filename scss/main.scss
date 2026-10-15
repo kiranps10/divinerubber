@@ -1,0 +1,62 @@
+// =============================================================
+// Divine Rubber — main Sass entry point
+// Compile:  npm run sass   (or npm run build for everything)
+// Order: abstracts (no CSS output) → vendors → base → layout → components → pages
+// =============================================================
+
+// Vendors (third-party CSS, none needed yet)
+@use 'vendors/vendors';
+
+// Base
+@use 'base/fonts';
+@use 'base/reset';
+@use 'base/base';
+@use 'base/typography';
+
+// Layout
+@use 'layout/container';
+@use 'layout/grid';
+@use 'layout/sections';
+@use 'layout/header';
+@use 'layout/footer';
+
+// Components
+@use 'components/buttons';
+@use 'components/section-heading';
+@use 'components/navigation';
+@use 'components/cards';
+@use 'components/flip-card';
+@use 'components/tabs';
+@use 'components/accordion';
+@use 'components/forms';
+@use 'components/page-banner';
+@use 'components/cta-band';
+@use 'components/slider';
+@use 'components/lightbox';
+@use 'components/timeline';
+@use 'components/stats';
+@use 'components/spec-table';
+@use 'components/process';
+@use 'components/gallery';
+@use 'components/social';
+@use 'components/image-zoom';
+@use 'components/article';
+@use 'components/footer' as footer-components;
+
+// Pages (page-specific styles only)
+@use 'pages/home';
+@use 'pages/about';
+@use 'pages/products';
+@use 'pages/product-detail';
+@use 'pages/manufacturing-quality';
+@use 'pages/industries';
+@use 'pages/infrastructure';
+@use 'pages/news';
+@use 'pages/blogs';
+@use 'pages/contact';
+@use 'pages/gallery' as gallery-page;
+@use 'pages/legal';
+
+// Shared card hover effects — loaded LAST so they apply on top of the component and
+// page styles of every card they list (one place to keep all cards consistent)
+@use 'components/card-hover';

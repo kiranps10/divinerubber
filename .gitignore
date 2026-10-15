@@ -1,0 +1,10 @@
+node_modules/
+qa-screens/
+assets/videos/.tmp-source.mp4
+
+# Local credentials & secrets (to prevent GitHub secret scanner from revoking PAT)
+git-credentials.txt
+GIT_DETAILS.txt
+.env
+*.secret
+

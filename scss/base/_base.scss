@@ -1,0 +1,97 @@
+@use '../abstracts' as *;
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: $header-height + 16px;
+}
+
+body {
+  font-family: $font-body;
+  font-size: fluid-token($fs-body);
+  font-weight: $weight-regular;
+  line-height: $lh-body;
+  color: $color-body;
+  background: $color-white;
+  overflow-x: clip; // guard against accidental horizontal scroll
+
+  &.nav-open,
+  &.lightbox-open {
+    overflow: hidden;
+  }
+}
+
+main {
+  display: block;
+}
+
+a {
+  @include transition(color, background-color, border-color, opacity);
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+::selection {
+  background: $color-primary;
+  color: $color-white;
+}
+
+// Skip link for keyboard users
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: $z-lightbox + 1;
+  padding: 12px 20px;
+  background: $color-dark;
+  color: $color-white;
+  font-weight: $weight-medium;
+  text-decoration: none;
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+  }
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// Placeholder / unverified content.
+// Invisible to visitors; add ?review to any URL to outline every item that needs client input.
+html.review-mode [data-todo] {
+  outline: 2px dashed #e5007e !important;
+  outline-offset: 2px;
+  position: relative;
+}
+
+html.review-mode [data-todo]::after {
+  content: 'TODO: ' attr(data-todo);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  max-width: 320px;
+  padding: 4px 8px;
+  background: #e5007e;
+  color: #fff;
+  font: 600 12px/1.35 $font-body;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

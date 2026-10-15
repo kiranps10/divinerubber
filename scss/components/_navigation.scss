@@ -1,0 +1,291 @@
+@use '../abstracts' as *;
+
+// Primary navigation — desktop dropdowns + mobile drawer (same markup).
+.primary-nav {
+  grid-column: 1;
+  grid-row: 1;
+
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: fluid(20, 44, 1200, 1920);
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__link {
+    position: relative;
+    display: inline-block;
+    padding-block: 10px;
+    font-size: 17px;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 4px;
+      width: 100%;
+      height: 2px;
+      background: $color-accent;
+      transform: scaleX(0);
+      transform-origin: left;
+      @include transition(transform);
+    }
+
+    @include hover {
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+
+    &[aria-current='page']::after {
+      transform: scaleX(1);
+    }
+  }
+
+  &__toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 32px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+      @include transition(transform);
+    }
+
+    &[aria-expanded='true'] svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    left: -20px;
+    z-index: $z-dropdown;
+    min-width: 270px;
+    padding: 12px 0;
+    background: $color-white;
+    color: $color-body;
+    box-shadow: $shadow-card-hover;
+    border-top: 3px solid $color-primary;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    @include transition(opacity, transform, visibility);
+
+    a {
+      display: block;
+      padding: 10px 22px;
+      font-size: 16px;
+      text-decoration: none;
+
+      @include hover {
+        background: $color-light;
+        color: $color-primary-text;
+      }
+
+      &[aria-current='page'] {
+        color: $color-primary-text;
+        font-weight: $weight-semibold;
+      }
+    }
+  }
+
+  &__item.is-open > &__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  // Desktop: also open on mouse hover
+  @include respond-above(lg) {
+    @media (hover: hover) {
+      // .is-dismissed = user pressed Escape while hovering (WCAG 1.4.13)
+      &__item:hover:not(.is-dismissed) > &__dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+      }
+    }
+  }
+
+  // Drawer-only extras
+  &__drawer-footer {
+    display: none;
+  }
+
+  // ---------- Mobile / tablet drawer ----------
+  @include respond-to(lg) {
+    position: fixed;
+    inset: $header-height-mobile 0 0 auto;
+    z-index: $z-drawer;
+    width: min(420px, 100%);
+    padding: 16px fluid($gutter-min, 40) 32px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: $color-dark;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform $duration $ease, visibility $duration;
+
+    body.nav-open & {
+      transform: none;
+      visibility: visible;
+    }
+
+    &__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    &__item {
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    &__link {
+      flex: 1;
+      padding-block: 16px;
+      font-size: 18px;
+
+      &::after {
+        display: none;
+      }
+
+      &[aria-current='page'] {
+        color: $color-accent;
+      }
+    }
+
+    &__toggle {
+      width: 48px;
+      height: 48px;
+    }
+
+    &__dropdown {
+      position: static;
+      flex-basis: 100%;
+      min-width: 0;
+      padding: 0 0 12px;
+      background: transparent;
+      color: $color-white;
+      box-shadow: none;
+      border: 0;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      display: none;
+
+      a {
+        padding: 10px 16px;
+        color: $color-muted-on-dark;
+
+        @include hover {
+          background: transparent;
+          color: $color-white;
+        }
+
+        &[aria-current='page'] {
+          color: $color-accent;
+        }
+      }
+    }
+
+    &__item.is-open > &__dropdown {
+      display: block;
+    }
+
+    &__drawer-footer {
+      display: grid;
+      gap: 16px;
+      margin-top: 28px;
+    }
+  }
+}
+
+// Section highlight: <body data-section="products"> marks the parent menu item
+@each $section in (about, products, industries, media, contact) {
+  body[data-section='#{$section}'] .primary-nav__item[data-nav='#{$section}'] > .primary-nav__link::after {
+    transform: scaleX(1);
+  }
+}
+
+// Hamburger
+.nav-toggle {
+  display: none;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  @include respond-to(lg) {
+    display: inline-block;
+  }
+
+  // The three bars are the LAST three children (a visually-hidden label comes first),
+  // so count from the end.
+  &__bar {
+    position: absolute;
+    left: 11px;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    @include transition(transform, opacity);
+
+    &:nth-last-child(3) {
+      top: 14px;
+    }
+
+    &:nth-last-child(2) {
+      top: 20px;
+    }
+
+    &:nth-last-child(1) {
+      top: 26px;
+    }
+  }
+
+  &[aria-expanded='true'] &__bar {
+    &:nth-last-child(3) {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    &:nth-last-child(2) {
+      opacity: 0;
+    }
+
+    &:nth-last-child(1) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+  }
+}
+
+// Dim page behind the open drawer
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: $z-drawer - 1;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  @include transition(opacity, visibility);
+
+  body.nav-open & {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @include respond-above(lg) {
+    display: none;
+  }
+}

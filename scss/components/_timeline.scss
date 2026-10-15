@@ -1,0 +1,237 @@
+@use '../abstracts' as *;
+
+// Smooth cross-fade between active years (background + text colours together)
+$timeline-fade: 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Edge fades (registered so they animate and so JS can read the resolved px value)
+@property --fade-l {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-r {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-extra {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+// Milestones timeline (design: "Divine Rubber Journey"), Home + About.
+// Full-bleed row: the first card lines up with the page content, upcoming/previous
+// cards run off the screen edges under a soft fade, and a blue handle on the line
+// below follows (and drives) the active milestone — js/components/timeline.js.
+.timeline {
+  --slide-gap: 0px;
+  --slide-w: calc(100% / 4.5); // 4½ cards: the next one is cut off at the right edge
+  --fade-extra: #{fluid(40, 180)}; // how far the fade reaches past the page gutter
+
+  @include respond-to(lg) {
+    --slide-w: calc(100% / 2.6);
+  }
+
+  @include respond-to(sm) {
+    --slide-w: 72%;
+  }
+
+  @include respond-to(xxs) {
+    --slide-w: 86%;
+  }
+
+  &__track {
+    --gutter: #{fluid($gutter-min, $gutter-max)};
+    --pad: max(var(--gutter), calc((100% - #{$container-max}) / 2));
+    padding-inline: var(--pad);
+    scroll-padding-inline: var(--pad);
+    cursor: grab;
+    // Fade only on the side(s) that have more milestones to see
+    mask-image: linear-gradient(90deg, transparent 0, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+    transition: --fade-l 0.4s $ease, --fade-r 0.4s $ease;
+  }
+
+  &.has-prev &__track {
+    --fade-l: calc(var(--pad) + var(--fade-extra));
+  }
+
+  &.has-next &__track {
+    --fade-r: calc(var(--pad) + var(--fade-extra));
+  }
+
+  // Line along the bottom edge of the section: blue up to the handle, grey after it
+  &__scrubber {
+    --pos: 0px;
+    position: relative;
+    height: 1px;
+    margin-top: fluid(40, 100);
+    // Sit exactly on the section's bottom edge; the handle overlaps the next section
+    margin-bottom: calc(#{fluid-token($space-section)} * -1);
+    background: $color-border;
+    cursor: pointer;
+    touch-action: none;
+
+    // Bigger hit area for clicking the thin line
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -14px 0;
+    }
+  }
+
+  &__scrub-fill {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: var(--pos);
+    height: 2px;
+    background: $color-primary;
+    transform: translateY(-50%);
+    transition: width 0.5s $ease;
+  }
+
+  &__handle {
+    position: absolute;
+    top: 50%;
+    left: var(--pos);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: fluid(48, 62);
+    height: fluid(48, 62);
+    border-radius: 50%;
+    background: $gradient-cta;
+    color: $color-white;
+    box-shadow: 0 6px 18px rgba(1, 124, 177, 0.35);
+    transform: translate(-50%, -50%);
+    transition: left 0.5s $ease, box-shadow $duration $ease;
+    cursor: grab;
+    touch-action: none;
+
+    svg {
+      width: fluid(12, 15);
+      height: fluid(12, 15);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    @include hover {
+      box-shadow: 0 8px 24px rgba(1, 124, 177, 0.5);
+    }
+  }
+
+  // While dragging, the handle follows the pointer exactly (no easing lag)
+  &__scrubber.is-dragging {
+    cursor: grabbing;
+
+    .timeline__handle {
+      cursor: grabbing;
+      transition: none;
+    }
+
+    .timeline__scrub-fill {
+      transition: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__track,
+    &__handle,
+    &__scrub-fill {
+      transition: none;
+    }
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    // Fixed top offset keeps every year on the same line
+    min-height: fluid(300, 440);
+    padding: fluid(56, 150) fluid(18, 32) fluid(28, 60);
+    overflow: hidden;
+    color: $color-body;
+    transition: color $timeline-fade;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity $timeline-fade;
+
+    img {
+      @include cover-image;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(20, 22, 27, 0.45), rgba(20, 22, 27, 0.92));
+    }
+  }
+
+  &__year {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: fluid(28, 36);
+    font-weight: $weight-medium;
+    line-height: 1;
+    color: $color-heading;
+    transition: color $timeline-fade;
+
+    &::after {
+      content: '';
+      flex: 1;
+      border-top: 1px dashed #b7b9bd;
+    }
+  }
+
+  &__title {
+    position: relative;
+    margin-top: 18px;
+    font-size: fluid(19, 25);
+    font-weight: $weight-medium;
+    color: $color-heading;
+    transition: color $timeline-fade;
+  }
+
+  &__text {
+    position: relative;
+    margin-top: 16px;
+    @include p1;
+  }
+
+  // Active / hovered milestone shows the photo (design: 2015 card)
+  // With autoplay (js/components/timeline.js) only .is-active is dark, so exactly
+  // one card is dark at a time; the script moves .is-active on hover/focus.
+  &__item.is-active,
+  &:not(.timeline--autoplay) &__item:hover,
+  &:not(.timeline--autoplay) &__item:focus-within {
+    color: #e3e4e6;
+
+    .timeline__bg {
+      opacity: 1;
+    }
+
+    .timeline__year {
+      color: $color-highlight;
+    }
+
+    .timeline__title {
+      color: $color-white;
+    }
+  }
+}
+
+// Vertical version for About page on small screens is not needed — slider handles it.

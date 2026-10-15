@@ -1,0 +1,120 @@
+// =============================================================
+// Design tokens — extracted from the approved homepage (Divinerubber.fig)
+// Change values here; every component reads from this file.
+// =============================================================
+
+// ---------- Colours ----------
+$color-primary: #017cb1;          // brand blue: eyebrow bars, icons, accents
+$color-primary-text: #016d9c;     // primary as TEXT on light backgrounds (AA contrast)
+$color-accent: #1eb2ca;           // cyan (decorative only — fails contrast as text bg)
+$color-dark: #23262d;             // dark sections, footer
+$color-dark-2: #2d3136;
+$color-dark-3: #3a3d43;
+$color-light: #f4f4f4;            // light grey sections
+$color-grey-soft: #f5f6f7;        // very light grey sections (.section--grey)
+$color-tint-blue: #e4f2f9;        // light blue bands (product enquiry, infrastructure CTA)
+$color-white: #fff;
+$color-black: #000;
+$color-heading: #000;
+$color-body: #222;
+$color-muted: #555;
+$color-muted-on-dark: #b9bcc2;
+$color-border: #d4d4d4;
+$color-border-light: #ececec;
+$color-highlight: #ffed00;        // yellow highlight — ONLY on dark backgrounds
+$color-success: #1d7a46;
+$color-error: #b3261e;
+
+// CTA gradient — matches the approved button reference (image 11.png) exactly, at the client's request.
+// NOTE: white text on #27B1C6 is ~2.5:1 contrast (WCAG AA needs 4.5:1). Accepted design decision;
+// the accessible alternative was: linear-gradient(90deg, #0a809f 0%, #03659a 100%).
+$gradient-cta: linear-gradient(90deg, #27b1c6 0%, #0a79ac 100%);
+$gradient-cta-hover: linear-gradient(90deg, #1e9db2 0%, #08679a 100%);
+$gradient-panel: linear-gradient(180deg, #036c9e 0%, #0b87a8 100%);
+$overlay-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
+$overlay-banner: linear-gradient(90deg, rgba(20, 22, 27, 0.88) 0%, rgba(20, 22, 27, 0.55) 55%, rgba(20, 22, 27, 0.25) 100%);
+
+// ---------- Typography ----------
+$font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+$font-body: 'DM Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+$weight-light: 300;
+$weight-regular: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+// Font sizes as [min px @375, max px @1920] — turned into clamp() by fluid()
+$fs-display: (40, 88);    // hero headline
+$fs-h1: (32, 58);         // section titles
+$fs-h2: (26, 42);         // sub-section titles / banner
+$fs-h3: (20, 25);         // card titles
+$fs-h4: (18, 20);
+$fs-lead: (17, 20);
+$fs-body: (16, 18);
+$fs-small: (14, 16);
+
+// Client typography spec — fixed sizes on all screens (rem so browser zoom/text-size still works)
+// P1 — all paragraph text AND bullet-point lists: DM Sans Light, 18px, line-height 26px, letter-spacing 1%
+$p1-size: 1.125rem;         // 18px
+$p1-weight: 300;            // Light
+$p1-line-height: 1.625rem;  // 26px
+$p1-letter-spacing: 0.01em; // 1%
+$eyebrow-size: 1.25rem;     // 20px  — subheadings / eyebrow labels
+$eyebrow-line-height: 105%;
+$fs-stat: (34, 50);
+
+$lh-tight: 1.15;
+$lh-heading: 1.2;
+$lh-body: 1.65;
+$ls-eyebrow: 0.3em;
+
+// ---------- Layout ----------
+$container-max: 1720px;                       // content width @1920 (100px gutters)
+$container-narrow: 960px;
+$container-medium: 1240px;
+$gutter-min: 16;
+$gutter-max: 100;
+
+// Vertical rhythm (px pairs → fluid)
+$space-section: (56, 130);
+$space-section-sm: (44, 90);
+$space-block: (32, 64);       // gap between heading and content
+$space-gap: (16, 32);         // grid gaps
+$space-gap-sm: (12, 20);
+
+// ---------- Shape & depth ----------
+$radius: 0;                    // design uses square corners throughout
+$radius-pill: 999px;
+$border: 1px solid $color-border;
+$shadow-card: 0 10px 30px rgba(17, 20, 26, 0.08);
+$shadow-card-hover: 0 18px 40px rgba(17, 20, 26, 0.16);
+
+// Card hover (components/_card-hover.scss) — full blue gradient, white content
+$card-hover-lift: 4px;
+$card-hover-duration: 0.3s;
+// The site's accessible brand gradient (see $gradient-cta note): white text ≥ 4.5 : 1 everywhere on it
+$gradient-card-hover: linear-gradient(135deg, #0a809f 0%, #03659a 100%);
+$card-hover-border: $color-accent;                         // cyan border
+$card-hover-shadow: 0 16px 34px rgba(3, 101, 154, 0.28);   // soft, blue-tinted
+// Dark cards: dark grey melting into deep brand blue
+$gradient-card-hover-dark: linear-gradient(160deg, $color-dark-2 0%, #0b4a6a 100%);
+$card-hover-glow-dark: 0 0 0 1px rgba(30, 178, 202, 0.5), 0 14px 34px rgba(30, 178, 202, 0.16);
+
+// ---------- Motion ----------
+$ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+$duration: 0.3s;
+$duration-slow: 0.6s;
+
+// ---------- Layers ----------
+$z-header: 100;
+$z-dropdown: 110;
+$z-drawer: 90;
+$z-lightbox: 1000;
+
+// Header after scrolling down (client spec)
+$header-scrolled-bg: #f6f6f6;
+$header-scrolled-text: #000;
+
+$header-height: 96px;
+$header-height-mobile: 72px;

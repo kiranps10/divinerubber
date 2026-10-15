@@ -1,0 +1,7 @@
+DIVINE RUBBER - STUDIO PRODUCT VISUALISATIONS
+
+44 square JPG images, grouped by the five catalogue categories. Product code and name are in each filename. Image-Index.csv lists exact dimensions and paths.
+
+These are AI-generated recreations for design review, not authenticated product photographs. They approximate the catalogue products and should be checked against actual products before publication. The octagonal image is the supplied approved sample. DH002 has no product photograph on the website and is a conceptual interpretation. Some catalogue photos show multiple variants; one representative is shown in each studio image.
+
+Source catalogue: https://www.divinerubber.com/products.html
