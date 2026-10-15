@@ -3,9 +3,9 @@
  *   1. Download the SVG from magnific.com (needs the team's account; check the licence —
  *      free icons usually require attribution, premium ones don't).
  *   2. Save it as  source-images/icons/<name>.svg  using the name the page already uses, e.g.
- *        sales-tag.svg          Contact › Sales Enquiries (price tag)
- *        spec-doc.svg           Contact › Product & Specification Enquiries (document with ruler)
- *        partner-handshake.svg  Contact › Business & Distribution Enquiries (handshake)
+ *        sales-chat.svg     Contact › Sales Enquiries (speech bubble with dots)
+ *        spec-messages.svg  Contact › Product & Specification Enquiries (two message bubbles)
+ *        partner-mail.svg   Contact › Business & Distribution Enquiries (envelope with question mark)
  *   3. Run  node tools/import-icons.js
  *
  * Each file is written to assets/icons/features/<name>.svg at 48 × 48 with every colour
