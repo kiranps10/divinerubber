@@ -421,6 +421,17 @@ html.review-mode [data-todo]::after {
 .split--reverse > :first-child {
   order: 2;
 }
+.split--equal {
+  align-items: stretch;
+}
+.split--equal > .split__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.split--equal > .split__media img {
+  height: 100%;
+}
 @media (max-width: 1023.98px) {
   .split, .split--wide-media {
     grid-template-columns: minmax(0, 1fr);
@@ -823,14 +834,33 @@ body.nav-open .site-header.is-scrolled .site-header__phone {
   cursor: not-allowed;
 }
 .btn--primary {
+  position: relative;
+  isolation: isolate;
   background: linear-gradient(90deg, #27b1c6 0%, #0a79ac 100%);
   color: #fff;
 }
+.btn--primary::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #1e9db2 0%, #08679a 100%);
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
 @media (hover: hover) and (pointer: fine) {
   .btn--primary:hover {
-    background: linear-gradient(90deg, #1e9db2 0%, #08679a 100%);
     box-shadow: 0 8px 22px rgba(3, 101, 154, 0.3);
   }
+  .btn--primary:hover::before {
+    opacity: 1;
+  }
+}
+.btn--primary:focus-visible::before {
+  opacity: 1;
 }
 .btn--light {
   background: #fff;
@@ -3625,32 +3655,73 @@ body.nav-open .nav-backdrop {
   }
 }
 
-.photo-grid {
-  columns: 3 320px;
-  column-gap: clamp(0.625rem, 0.4733009709rem + 0.647vw, 1.25rem);
+.photo-mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: clamp(11.875rem, 8.6893203883rem + 13.592vw, 25rem);
+  grid-auto-flow: row dense;
+  gap: clamp(0.5rem, 0.4393203883rem + 0.259vw, 0.75rem);
 }
-.photo-grid--compact {
-  columns: 4 240px;
+.photo-mosaic__item {
+  min-width: 0;
 }
-.photo-grid__item {
-  break-inside: avoid;
-  margin-bottom: clamp(0.625rem, 0.4733009709rem + 0.647vw, 1.25rem);
+.photo-mosaic__item[data-span=w] {
+  grid-column: span 2;
+}
+.photo-mosaic__item[data-span=f] {
+  grid-column: 1/-1;
+}
+.photo-mosaic__item[data-span=tl], .photo-mosaic__item[data-span=tr] {
+  grid-row: span 2;
+}
+.photo-mosaic .gallery-item {
+  height: 100%;
+  background: #f5f6f7;
+}
+.photo-mosaic .gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  mix-blend-mode: multiply;
+}
+@media (hover: hover) and (pointer: fine) {
+  .photo-mosaic .gallery-item__caption {
+    padding-top: 18px;
+    background: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition-property: opacity, transform;
+    transition-duration: 0.3s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .photo-mosaic .gallery-item__caption span {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .photo-mosaic .gallery-item:hover .gallery-item__caption,
+  .photo-mosaic .gallery-item:focus-visible .gallery-item__caption {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-mosaic .gallery-item__caption {
+    transform: none;
+  }
 }
 @media (max-width: 575.98px) {
-  .photo-grid, .photo-grid--compact {
-    columns: 2;
-    column-gap: 8px;
+  .photo-mosaic {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: clamp(9.375rem, 7.7063106796rem + 7.12vw, 16.25rem);
+    gap: 8px;
   }
-  .photo-grid__item {
-    margin-bottom: 8px;
-  }
-  .photo-grid .gallery-item__caption {
+  .photo-mosaic .gallery-item__caption {
     padding: 28px 10px 10px;
   }
-  .photo-grid .gallery-item__caption strong {
+  .photo-mosaic .gallery-item__caption strong {
     font-size: 14px;
   }
-  .photo-grid .gallery-item__caption span {
+  .photo-mosaic .gallery-item__caption span {
     display: none;
   }
 }
@@ -7021,6 +7092,11 @@ body.nav-open .nav-backdrop {
   padding-top: 16px;
   border-top: 1px solid #ececec;
   color: #555;
+}
+.facility-feature__text + .facility-feature__text {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 @media (max-width: 1023.98px) {
   .facility-feature {

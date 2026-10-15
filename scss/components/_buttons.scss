@@ -59,13 +59,35 @@
   }
 
   // Gradient (main CTA)
+  // Also used for "View More" / "View All" and other secondary CTAs. Gradients can't
+  // transition, so the hover gradient sits on a layer behind the label and fades in.
   &--primary {
+    position: relative;
+    isolation: isolate;
     background: $gradient-cta;
     color: $color-white;
 
-    @include hover {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      z-index: -1;
+      border-radius: inherit;
       background: $gradient-cta-hover;
+      opacity: 0;
+      @include transition(opacity);
+    }
+
+    @include hover {
       box-shadow: 0 8px 22px rgba(3, 101, 154, 0.3);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    &:focus-visible::before {
+      opacity: 1;
     }
   }
 

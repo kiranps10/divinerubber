@@ -29,6 +29,7 @@ export function initFilters() {
       });
       buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filterValue === value)));
       if (empty) empty.hidden = shown > 0;
+      list.dispatchEvent(new CustomEvent('filter:change', { detail: { value, shown } }));
       if (status) {
         const label = buttons.find((b) => b.dataset.filterValue === value)?.textContent.trim();
         status.textContent = `Showing ${shown} item${shown === 1 ? '' : 's'}${value === 'all' ? '' : ` in ${label}`}.`;

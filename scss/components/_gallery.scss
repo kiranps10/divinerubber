@@ -1,30 +1,78 @@
 @use '../abstracts' as *;
 
-// Masonry-style photo grid using CSS columns (no JS layout, no layout shift)
-.photo-grid {
-  columns: 3 320px;
-  column-gap: fluid(10, 20);
-
-  &--compact {
-    columns: 4 240px;
-  }
+// Editorial photo mosaic (Gallery page; reference: marwa-travel gallery) — equal-height rows,
+// wide (2 columns) and tall (2 rows) tiles mixed with standard ones. The pattern is set per
+// tile with data-span and re-applied after filtering by js/components/mosaic.js.
+.photo-mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: fluid(190, 400);
+  grid-auto-flow: row dense; // without JS: no holes
+  gap: fluid(8, 12);
 
   &__item {
-    break-inside: avoid;
-    margin-bottom: fluid(10, 20);
+    min-width: 0;
+
+    &[data-span='w'] {
+      grid-column: span 2;
+    }
+
+    &[data-span='f'] {
+      grid-column: 1 / -1;
+    }
+
+    &[data-span='tl'],
+    &[data-span='tr'] {
+      grid-row: span 2;
+    }
   }
 
-  // Phones: two columns keeps the page from becoming an endless scroll
-  @include respond-to(xs) {
-    &,
-    &--compact {
-      columns: 2;
-      column-gap: 8px;
+  // Every tile fills its cell; photos are cropped to the cell, never stretched
+  // Product cut-outs on white: multiply onto the soft grey so every tile has an edge
+  // against the white page (photos are darkened by under 4%, invisible)
+  .gallery-item {
+    height: 100%;
+    background: $color-grey-soft;
+
+    img {
+      @include cover-image;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  // Captions appear with the blue hover overlay (_card-hover.scss) on mouse devices;
+  // touch screens have no hover, so they keep the caption on its dark fade
+  @media (hover: hover) and (pointer: fine) {
+    .gallery-item__caption {
+      padding-top: 18px;
+      background: none;
+      opacity: 0;
+      transform: translateY(8px);
+      @include transition(opacity, transform);
+
+      span {
+        color: rgba(255, 255, 255, 0.85);
+      }
     }
 
-    &__item {
-      margin-bottom: 8px;
+    .gallery-item:hover .gallery-item__caption,
+    .gallery-item:focus-visible .gallery-item__caption {
+      opacity: 1;
+      transform: none;
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-item__caption {
+      transform: none;
+    }
+  }
+
+  // Phones: two columns (mosaic.js switches to the 2-column pattern)
+  @include respond-to(xs) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: fluid(150, 260);
+    gap: 8px;
 
     .gallery-item__caption {
       padding: 28px 10px 10px;

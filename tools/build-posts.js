@@ -128,7 +128,9 @@ function aside(post, type) {
             <a class="btn btn--primary btn--block" href="contact.html#enquiry">Contact Us
               <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
             </a>
-            <a class="btn btn--outline btn--block" href="products.html">View Products</a>
+            <a class="btn btn--primary btn--block" href="products.html">View Products
+              <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
+            </a>
           </aside>`;
   }
   return `<aside class="article-body__aside" aria-label="Find the right mat">
@@ -137,7 +139,9 @@ function aside(post, type) {
             <a class="btn btn--primary btn--block" href="index.html#product-finder">Product Finder
               <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
             </a>
-            <a class="btn btn--outline btn--block" href="contact.html#enquiry">Ask an Expert</a>
+            <a class="btn btn--primary btn--block" href="contact.html#enquiry">Ask an Expert
+              <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
+            </a>
           </aside>`;
 }
 
@@ -231,8 +235,8 @@ async function detailPage(post, type, list, tpl) {
             <span class="section-heading__eyebrow">${T.related.eyebrow}</span>
             <h2 class="section-heading__title" id="rel-title">${T.related.title}</h2>
           </div>
-          <a class="btn btn--outline" href="${T.list}">${T.related.all}
-            <span class="btn__icon"><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-arrow-circle"></use></svg></span>
+          <a class="btn btn--primary" href="${T.list}">${T.related.all}
+            <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
           </a>
         </div>
         <ul class="grid grid--3">

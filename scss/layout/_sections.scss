@@ -69,6 +69,22 @@
     order: 2;
   }
 
+  // Text column and photo exactly the same height: the text is centred in its column and
+  // the photo fills the row (never smaller than its usual 4:3 size)
+  &--equal {
+    align-items: stretch;
+
+    > .split__body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    > .split__media img {
+      height: 100%;
+    }
+  }
+
   @include respond-to(md) {
     &,
     &--wide-media {

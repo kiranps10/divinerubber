@@ -19,6 +19,7 @@ import { initFlipCards } from './components/flip-card.js';
 import { initProductDetail } from './components/product-detail.js';
 import { initProductGallery } from './components/product-gallery.js';
 import { initExpertise } from './components/expertise.js';
+import { initMosaics } from './components/mosaic.js';
 
 // Country-code phone picker + searchable Country field: loaded only on pages that have them
 // (keeps the country list off other pages)
@@ -45,7 +46,7 @@ document.querySelectorAll('[data-year]').forEach((el) => {
   el.textContent = String(new Date().getFullYear());
 });
 
-const features = [initNavigation, initSliders, initHero, initAccordions, initFilters, initPhoneInputs, initForms, initFinder, initVideos, initGallery, initCounters, initTimelineAutoplay, initProductRange, initProjects, initFlipCards, initProductDetail, initProductGallery, initExpertise];
+const features = [initNavigation, initSliders, initHero, initAccordions, initFilters, initMosaics, initPhoneInputs, initForms, initFinder, initVideos, initGallery, initCounters, initTimelineAutoplay, initProductRange, initProjects, initFlipCards, initProductDetail, initProductGallery, initExpertise];
 features.forEach((init) => {
   try {
     init();

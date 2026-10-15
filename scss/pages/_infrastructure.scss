@@ -54,6 +54,13 @@
     padding-top: 16px;
     border-top: 1px solid $color-border-light;
     color: $color-muted;
+
+    // Further paragraphs: no divider, just paragraph spacing
+    & + & {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
   }
 
   @include respond-to(md) {

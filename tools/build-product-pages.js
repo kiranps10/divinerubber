@@ -182,8 +182,8 @@ function page(p) {
             <div class="btn-group pd-hero__actions">
               <a class="btn btn--primary" href="${enquire}">Enquire Now ${arrowCta}</a>
               ${p.specPdf
-                ? `<a class="btn btn--outline" href="${p.specPdf}" download>Download Specifications <span class="btn__icon">${icon('i-download')}</span></a>`
-                : `<a class="btn btn--outline" href="${enquire}">Request Specifications <span class="btn__icon">${icon('i-file-text')}</span></a>`}
+                ? `<a class="btn btn--primary" href="${p.specPdf}" download>Download Specifications <span class="btn__icon">${icon('i-download')}</span></a>`
+                : `<a class="btn btn--primary" href="${enquire}">Request Specifications ${arrowCta}</a>`}
             </div>
           </div>
         </div>
@@ -271,7 +271,7 @@ function page(p) {
             <span class="section-heading__eyebrow">Explore the Range</span>
             <h2 class="section-heading__title" id="pd-related-title">You may also like.</h2>
           </div>
-          <a class="link-arrow" href="products.html">View all products <svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-arrow-right"></use></svg></a>
+          <a class="btn btn--primary" href="products.html">View All Products ${arrowCta}</a>
         </div>
         <ul class="grid grid--4 flip-grid">
 ${related.map((r) => flipCard(r, { indent: '          ' })).join('\n')}
@@ -286,7 +286,7 @@ ${related.map((r) => flipCard(r, { indent: '          ' })).join('\n')}
         <p class="pd-cta__text">Share your preferred size, quantity and delivery destination. Our team will help with product options and pricing.</p>
         <div class="pd-cta__actions">
           <a class="btn btn--primary" href="${enquire}">Enquire Now ${arrowCta}</a>
-          <a class="btn btn--outline" href="contact.html">Contact Us <span class="btn__icon">${icon('i-mail')}</span></a>
+          <a class="btn btn--primary" href="contact.html">Contact Us ${arrowCta}</a>
         </div>
       </div>
     </section>
