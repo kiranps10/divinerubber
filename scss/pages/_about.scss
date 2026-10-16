@@ -726,7 +726,7 @@ $exp-reveal: 0.45s;
 
 // Three Promises: crop focus for the client-supplied photos (cards keep their 16:10 frame)
 .focus-card__img--quality {
-  object-position: 50% 12%; // keep the inspector's face in frame
+  object-position: 50% 30%; // keep the thickness gauge and mat surface in frame
 }
 
 .focus-card__img--delivery {

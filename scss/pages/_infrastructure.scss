@@ -276,3 +276,16 @@
     margin-top: fluid(22, 32);
   }
 }
+
+// Overview: the copy sets the row height and the photo fills it exactly,
+// so both columns share top and bottom edges (stacked below md as usual)
+.inf-split {
+  @include respond-above(md) {
+    > .split__body { justify-content: flex-start; }
+
+    > .split__media {
+      height: 0;
+      min-height: 100%;
+    }
+  }
+}

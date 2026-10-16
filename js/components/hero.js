@@ -6,6 +6,10 @@
  *   The animation is the clock, so pausing freezes the bar exactly where it is.
  * - Pauses on hover / keyboard focus / hidden tab, has a pause button (WCAG 2.2.2).
  * - prefers-reduced-motion: no autoplay, no zoom (slides change only via "Next").
+ * - A slide with a background video ([data-hero-video]) stays up for the whole clip,
+ *   restarts it each time it becomes active, and only plays while it is the active
+ *   slide and the slideshow isn't paused (Pause button, hidden tab, reduced motion
+ *   → the poster frame stays). If autoplay is blocked, the poster simply remains.
  */
 const INTERVAL = 5000;
 
@@ -29,6 +33,27 @@ export function initHero() {
 
   hero.style.setProperty('--hero-interval', `${INTERVAL}ms`);
 
+  const videos = slides.map((s) => s.querySelector('[data-hero-video]'));
+  // Video slides last as long as the clip (known once its metadata has loaded)
+  videos.forEach((video, n) => {
+    if (!video || !bars[n]) return;
+    const fit = () => {
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        bars[n].style.setProperty('--hero-interval', `${Math.round(video.duration * 1000)}ms`);
+      }
+    };
+    if (video.readyState >= 1) fit();
+    else video.addEventListener('loadedmetadata', fit, { once: true });
+  });
+
+  const syncVideos = () => {
+    videos.forEach((video, n) => {
+      if (!video) return;
+      if (n === index && !userPaused && !document.hidden) video.play().catch(() => {});
+      else video.pause();
+    });
+  };
+
   const thumbOf = (slide) => slide.querySelector('img');
 
   const show = (i) => {
@@ -43,6 +68,11 @@ export function initHero() {
       void bars[index].offsetWidth; // reflow so the animation starts again from 0
       bars[index].classList.add('is-active');
     }
+    // The active video starts from the beginning of the clip
+    const video = videos[index];
+    if (video && video.readyState >= 1) video.currentTime = 0;
+    syncVideos();
+
     const upcoming = slides[(index + 1) % slides.length];
     if (nextName) nextName.textContent = upcoming.dataset.name;
     const img = thumbOf(upcoming);
@@ -56,6 +86,7 @@ export function initHero() {
   const sync = () => {
     hero.classList.toggle('is-holding', hovering || focused || document.hidden);
     hero.classList.toggle('is-paused', userPaused);
+    syncVideos();
   };
 
   // Bar filled → next slide

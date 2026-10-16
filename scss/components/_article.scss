@@ -210,36 +210,45 @@
   }
 }
 
-// Draft / sample notice shown on placeholder articles
-.draft-note {
-  display: flex;
-  gap: 12px;
-  padding: 14px 18px;
+// Event Details panel at the top of an event article (tools/build-posts.js eventPanel)
+.event-facts {
+  margin-bottom: fluid(28, 40);
+  padding: fluid(20, 28);
   border-left: 4px solid $color-primary;
-  background: #e8f3f9;
-  font-size: 15px;
-  color: $color-primary-text;
-}
+  background: $color-tint-blue;
 
-// "Draft for review" label — shown instead of a date until a post is approved
-// (tools/posts.js: add `date` to publish)
-.post-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: $radius-pill;
-  background: #e8f3f9;
-  font-size: 12px;
-  font-weight: $weight-semibold;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: $color-primary-text;
-}
+  &__title {
+    font-size: fluid-token($fs-h4);
+    font-weight: $weight-semibold;
+    color: $color-heading;
+  }
 
-.post-card__soon {
-  margin-top: auto;
-  padding-top: 6px;
-  font-size: 14px;
-  font-weight: $weight-semibold;
-  color: $color-muted;
+  &__list {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 4px 16px;
+
+    @include respond-to(xs) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  dt {
+    font-size: 14px;
+    font-weight: $weight-semibold;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $color-primary-text;
+  }
+
+  dd {
+    margin: 0;
+    color: $color-heading;
+  }
 }

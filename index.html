@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" href="assets/icons/favicon-192.png">
   <link rel="preload" href="assets/fonts/dm-sans-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/playfair-display-400-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/images/products/diamond-top-runner-roll-864.webp" as="image" type="image/webp" imagesrcset="assets/images/products/diamond-top-runner-roll-480.webp 480w, assets/images/products/diamond-top-runner-roll-864.webp 864w" imagesizes="(max-width: 1023px) 92vw, 62vw" fetchpriority="high">
+  <link rel="preload" href="assets/videos/home-hero-poster.jpg" as="image" type="image/jpeg" fetchpriority="high">
   <link rel="stylesheet" href="css/main.min.css">
   <script type="module" src="js/main.js"></script>
 </head>
@@ -108,8 +108,13 @@
     <!-- ============ HERO ============ -->
     <section class="hero" aria-roledescription="carousel" aria-label="Featured products" data-hero>
       <div class="hero__slides">
-        <div class="hero__slide hero__slide--product is-active" data-hero-slide data-name="Diamond Top Runner" role="group" aria-roledescription="slide" aria-label="1 of 3: Diamond Top Runner">
-          <img class="hero__product" src="assets/images/products/diamond-top-runner-roll-864.webp" srcset="assets/images/products/diamond-top-runner-roll-480.webp 480w, assets/images/products/diamond-top-runner-roll-864.webp 864w" sizes="(max-width: 1023px) 92vw, 62vw" width="864" height="496" alt="Rolled Divine Rubber diamond-top runner mat" fetchpriority="high">
+        <div class="hero__slide hero__slide--video is-active" data-hero-slide data-name="Diamond Top Runner" role="group" aria-roledescription="slide" aria-label="1 of 3: Diamond Top Runner">
+          <!-- Background video: muted, looping, decorative. The poster shows until it plays; the <img> is the fallback where video is unsupported (and the Next-slide thumbnail). -->
+          <!-- [html-validate-disable-next no-autoplay -- muted decorative background; the slideshow Pause button stops it] -->
+          <video class="hero__video" autoplay muted loop playsinline preload="auto" poster="assets/videos/home-hero-poster.jpg" width="864" height="496" aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback data-hero-video>
+            <source src="assets/videos/home-hero.mp4" type="video/mp4">
+            <img class="hero__photo" src="assets/videos/home-hero-poster.jpg" width="864" height="496" alt="">
+          </video>
         </div>
         <div class="hero__slide" data-hero-slide data-name="Runners Mat" role="group" aria-roledescription="slide" aria-label="2 of 3: Runners Mat">
           <img class="hero__photo" src="assets/images/home/runners-mat-1920.webp" srcset="assets/images/home/runners-mat-640.webp 640w, assets/images/home/runners-mat-1200.webp 1200w, assets/images/home/runners-mat-1920.webp 1920w" sizes="100vw" width="1920" height="1080" alt="Person in trainers walking across a black rubber runner mat" loading="lazy">
@@ -260,31 +265,31 @@
       <div class="slider timeline" data-slider data-timeline-autoplay="4500">
         <div class="slider__track timeline__track" data-slider-track tabindex="0" role="group" aria-label="Company milestones, scrollable">
           <article class="timeline__item">
-            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/factory/rubber-mill-640.webp" width="640" height="360" alt="" loading="lazy"></div>
+            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/infra/mixing-rollers-760.webp" width="760" height="504" alt="" loading="lazy"></div>
             <p class="timeline__year">2002</p>
             <h3 class="timeline__title">The Beginning</h3>
             <p class="timeline__text">It was established in 2002 at Eara, Alleppey District in Kerala State, South India.</p>
           </article>
           <article class="timeline__item" data-todo="Milestone from design — confirm year and text">
-            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/factory/production-line-640.webp" width="640" height="640" alt="" loading="lazy"></div>
+            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/infra/roll-line-760.webp" width="760" height="504" alt="" loading="lazy"></div>
             <p class="timeline__year">2010</p>
             <h3 class="timeline__title">Manufacturing Expansion</h3>
             <p class="timeline__text">Divine focuses on delivering quality products at competitive prices.</p>
           </article>
           <article class="timeline__item" data-todo="Milestone from design — confirm year and text">
-            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/factory/rolls-inspection-640.webp" width="640" height="640" alt="" loading="lazy"></div>
+            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/about/expertise-jute-products-490.webp" width="490" height="503" alt="" loading="lazy"></div>
             <p class="timeline__year">2015</p>
             <h3 class="timeline__title">Product Diversification</h3>
             <p class="timeline__text">Expanded into specialized flooring and matting solutions for multiple industries.</p>
           </article>
           <article class="timeline__item" data-todo="Milestone from design — confirm year and text">
-            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/industries/warehouse-640.webp" width="640" height="640" alt="" loading="lazy"></div>
+            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/stock/port-container-loading-640.webp" width="640" height="427" alt="" loading="lazy"></div>
             <p class="timeline__year">2018</p>
             <h3 class="timeline__title">Entering Global Markets</h3>
             <p class="timeline__text">Successfully established export operations and international partnerships.</p>
           </article>
           <article class="timeline__item" data-todo="Milestone from design — confirm year and text">
-            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/factory/mat-inspection-640.webp" width="640" height="640" alt="" loading="lazy"></div>
+            <div class="timeline__bg" aria-hidden="true"><img src="assets/images/about/promise-quality-708.webp" width="708" height="724" alt="" loading="lazy"></div>
             <p class="timeline__year">2020</p>
             <h3 class="timeline__title">Advanced Manufacturing</h3>
             <p class="timeline__text">Invested in modern production technologies and enhanced quality systems.</p>
@@ -849,11 +854,11 @@
           <!-- TODO (client): supply the official profile URLs, then add href="…" to each link below and remove data-todo.
                Until then they are placeholder links (no href): shown as in the design, not clickable, no dead links. -->
           <ul class="footer-social" data-todo="Social media URLs not supplied yet — icons are not clickable until the client provides them">
-            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-facebook"></use></svg><span class="visually-hidden">Facebook (coming soon)</span></a></li>
-            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-youtube"></use></svg><span class="visually-hidden">YouTube (coming soon)</span></a></li>
-            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-instagram"></use></svg><span class="visually-hidden">Instagram (coming soon)</span></a></li>
-            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-linkedin"></use></svg><span class="visually-hidden">LinkedIn (coming soon)</span></a></li>
-            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-whatsapp"></use></svg><span class="visually-hidden">WhatsApp (coming soon)</span></a></li>
+            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-facebook"></use></svg><span class="visually-hidden">Facebook</span></a></li>
+            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-youtube"></use></svg><span class="visually-hidden">YouTube</span></a></li>
+            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-instagram"></use></svg><span class="visually-hidden">Instagram</span></a></li>
+            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-linkedin"></use></svg><span class="visually-hidden">LinkedIn</span></a></li>
+            <li><a><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-whatsapp"></use></svg><span class="visually-hidden">WhatsApp</span></a></li>
           </ul>
         </div>
 

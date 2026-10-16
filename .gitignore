@@ -8,3 +8,6 @@ GIT_DETAILS.txt
 .env
 *.secret
 
+
+# Raw source video (the site uses the optimised assets/videos/home-hero.mp4)
+divinerubbervideo.mp4

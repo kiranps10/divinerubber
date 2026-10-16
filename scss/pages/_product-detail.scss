@@ -515,6 +515,11 @@ $pd-fade: 0.5s;
     object-fit: cover;
   }
 
+  // Keep the mat on the floor in frame (tools/product-details.js `crop: 'floor'`)
+  &--crop-floor img {
+    object-position: 50% 100%;
+  }
+
   &__label {
     margin-top: 12px;
     font-size: fluid-token($fs-h4);

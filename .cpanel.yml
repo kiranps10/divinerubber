@@ -1,0 +1,19 @@
+---
+# cPanel › Git Version Control › "Deploy HEAD Commit" runs these tasks on the server.
+# Copies ONLY the public website into public_html/divinerubber — source files (scss/, tools/,
+# partials/, source-images/, Products/, design PNGs/PDF/FIG/DOCX, node_modules) stay in Git.
+# The live .htaccess is never overwritten (copied only if the server has none yet), so any
+# server-side configuration there is preserved.
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html/divinerubber
+    - /bin/mkdir -p $DEPLOYPATH
+    # Pages (the standalone mock-up divine-infrastructure.html is not part of the site)
+    - /bin/find . -maxdepth 1 -name '*.html' ! -name 'divine-infrastructure.html' -exec /bin/cp -f {} $DEPLOYPATH/ \;
+    - /bin/cp -f robots.txt sitemap.xml $DEPLOYPATH/
+    # Styles, scripts, images, icons, fonts, videos, form handler
+    - /bin/cp -Rf css js assets forms $DEPLOYPATH/
+    # Server config: only if missing on the server
+    - /bin/sh -c '[ -f "$DEPLOYPATH/.htaccess" ] || /bin/cp .htaccess "$DEPLOYPATH/"'
+    # Pages that were unpublished (drafts) — remove any old live copy
+    - /bin/rm -f $DEPLOYPATH/news-detail.html $DEPLOYPATH/news-exhibitions-and-trade-fairs.html

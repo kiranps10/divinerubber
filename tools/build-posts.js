@@ -7,11 +7,16 @@
  *
  * Detail pages reuse the head / header / footer of blog-detail.html, so they always
  * match the site template. Never edit generated pages by hand — edit tools/posts.js.
+ *
+ * Publishing: only posts with status: 'published' are built and listed. Drafts stay in
+ * tools/posts.js; if a page was generated for a post that is now a draft, it is deleted
+ * and dropped from the sitemap, so unapproved content never stays online.
  */
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const { blog, news } = require('./posts');
+const { flipCard, product } = require('./flip-card');
 
 const ROOT = path.resolve(__dirname, '..');
 const IMG = path.join(ROOT, 'assets', 'images');
@@ -35,7 +40,6 @@ const TYPES = {
   },
 };
 
-const DRAFT_TODO = 'Draft for review — approve the text and set a publication date (add `date` in tools/posts.js)';
 const ICON = (id) => `<svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-${id}"></use></svg>`;
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -69,23 +73,98 @@ function dateLabel(post, long) {
   return `${d} ${long ? MONTHS[m - 1] : MONTHS[m - 1].slice(0, 3)} ${y}`;
 }
 
-// Card meta: publication date only (calendar icon). Dates are never invented —
-// until a post has an approved `date`, the card says "Date to be confirmed".
-function cardMeta(post) {
-  const when = post.date
-    ? `<time datetime="${post.date}">${dateLabel(post)}</time>`
-    : 'Date to be confirmed';
-  return `<p class="post-card__meta"><span>${ICON('calendar')}${when}</span></p>`;
+// Event dates: "12 March 2027", "12–14 March 2027", "30 March – 2 April 2027"
+function eventDates(e, long = true) {
+  const fmt = (iso, withMonth = true, withYear = true) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    const month = long ? MONTHS[m - 1] : MONTHS[m - 1].slice(0, 3);
+    return [d, withMonth ? month : null, withYear ? y : null].filter(Boolean).join(' ');
+  };
+  if (!e.end || e.end === e.start) return fmt(e.start);
+  const [y1, m1] = e.start.split('-');
+  const [y2, m2] = e.end.split('-');
+  if (y1 === y2 && m1 === m2) return `${fmt(e.start, false, false)}–${fmt(e.end)}`;
+  return `${fmt(e.start, true, y1 !== y2)} – ${fmt(e.end)}`;
 }
 
+// Card meta: an event shows when and where it happens; other posts show their publication
+// date once the client has approved one (`date`), otherwise the reading time.
+// Dates are never invented.
+function cardMeta(post) {
+  if (post.event) {
+    return `<p class="post-card__meta"><span>${ICON('calendar')}<time datetime="${post.event.start}">${eventDates(post.event, false)}</time></span><span>${ICON('map-pin')}${post.event.city}</span></p>`;
+  }
+  const meta = post.date
+    ? `<span>${ICON('calendar')}<time datetime="${post.date}">${dateLabel(post)}</time></span>`
+    : `<span>${ICON('clock')}${post.readMin} min read</span>`;
+  return `<p class="post-card__meta">${meta}</p>`;
+}
+
+// Review notes (visible with ?review only) — never public text
 function todoOf(post) {
   const parts = [];
-  if (!post.date) parts.push(DRAFT_TODO);
-  if (post.dummyDate) parts.push('Placeholder (dummy) date — replace with the real publication date and approve the text');
   if (post.todo) parts.push(post.todo);
   if (post.ai) parts.push('Photo is an AI-generated visual — replace with a real photo');
   return parts.length ? ` data-todo="${parts.join('; ')}"` : '';
 }
+
+// Events must carry verified details before they can be published
+function checkEvent(post) {
+  const e = post.event;
+  const missing = ['start', 'name', 'venue', 'city', 'purpose'].filter((k) => !e || !e[k]);
+  if (missing.length) throw new Error(`Event "${post.title}" is published but missing verified ${missing.join(', ')}`);
+}
+
+// "Event details" panel at the top of an event article
+function eventPanel(post) {
+  const e = post.event;
+  const row = (label, value) => (value ? `
+              <div class="event-facts__row"><dt>${label}</dt><dd>${value}</dd></div>` : '');
+  const site = e.url ? `<a href="${e.url}" rel="noopener" target="_blank">${e.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>` : '';
+  return `<section class="event-facts" aria-labelledby="event-facts-title">
+            <h2 class="event-facts__title" id="event-facts-title">Event Details</h2>
+            <dl class="event-facts__list">${row('Event', e.name)}${row('Date', `<time datetime="${e.start}">${eventDates(e)}</time>`)}${row('Venue', `${e.venue}, ${e.city}`)}${row('Stand', e.stand)}${row('Purpose', e.purpose)}${row('Website', site)}
+            </dl>
+          </section>`;
+}
+
+// Products mentioned in the article, as the site-wide product card
+function productsSection(post) {
+  if (!post.products || !post.products.length) return '';
+  const cards = post.products.map((name) => flipCard(product(name), { indent: '          ' }));
+  return `
+      <!-- Products mentioned in this article (site-wide product card) -->
+      <section class="section section--sm section--flush-top" aria-labelledby="art-products-title">
+        <div class="container">
+          <div class="heading-row">
+            <div class="section-heading section-heading--sm">
+              <span class="section-heading__eyebrow">From Our Range</span>
+              <h2 class="section-heading__title" id="art-products-title">Products in This Article</h2>
+            </div>
+            <a class="btn btn--primary" href="products.html">View All Products
+              <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
+            </a>
+          </div>
+          <ul class="grid grid--${cards.length >= 4 ? 4 : 3} flip-grid">
+${cards.join('\n')}
+          </ul>
+        </div>
+      </section>`;
+}
+
+// Closing CTA background (dark band, faded): real-world use, inspection and production photos
+const CTA_BG = ['industries/retail', 'factory/mat-inspection', 'home/runners-mat', 'industries/warehouse', 'factory/rubber-mill'];
+async function pickCtaImage(base) {
+  const info = await image(base);
+  return info.files.reduce((best, f) => (Math.abs(f.w - 1200) < Math.abs(best.w - 1200) ? f : best));
+}
+
+// Closing call to action, per content type
+const CTA = {
+  blog: { eyebrow: 'Need Advice?', title: 'Find the Right Mat for Your Space', text: 'Tell us where the mat will go and how the area is used — we’ll suggest designs, sizes and quantities.' },
+  news: { eyebrow: 'Talk to Our Team', title: 'Questions About Our Range?', text: 'Ask us about products, sizes, quantities, samples or delivery to India and overseas.' },
+  event: { eyebrow: 'Meet Us', title: 'Arrange a Meeting With Our Team', text: 'Importers, distributors and businesses can book time with us to discuss the range, samples and orders.' },
+};
 
 async function card(post, type, { listing }) {
   const img = await image(post.image);
@@ -112,7 +191,7 @@ async function figureHtml(fig) {
 }
 
 function aside(post, type) {
-  if (post.aside === 'meeting') {
+  if (post.event || post.aside === 'meeting') {
     return `<aside class="article-body__aside" aria-label="Meet our team">
             <h2 class="article-body__aside-title">Meet Our Team</h2>
             <p class="t-p1">Talk to us about the range, samples, quantities and delivery.</p>
@@ -179,12 +258,22 @@ async function detailPage(post, type, list, tpl) {
   let body = post.body.trim();
   if (body.includes('FIGURE')) body = body.replace('FIGURE', post.figure ? await figureHtml(post.figure) : '');
 
-  const metaDate = post.date
-    ? `<span>${ICON('calendar')}<time datetime="${post.date}">${dateLabel(post, true)}</time></span>`
-    : '<span class="post-status">Draft for review</span>';
-  const draftNote = post.date && !post.dummyDate ? '' : `
-            <p class="draft-note"${todoOf(post)}><span aria-hidden="true">ℹ</span>Draft for review — the Divine Rubber team will confirm this content and set a publication date before it goes live.</p>`;
+  if (post.event) checkEvent(post);
+  // Publication date only once approved; events show their own date and place instead
+  const metaDate = post.event
+    ? `<span>${ICON('calendar')}<time datetime="${post.event.start}">${eventDates(post.event)}</time></span>
+            <span>${ICON('map-pin')}${post.event.venue}, ${post.event.city}</span>`
+    : post.date
+      ? `<span>${ICON('calendar')}<time datetime="${post.date}">${dateLabel(post, true)}</time></span>`
+      : '';
+  const cta = CTA[post.event ? 'event' : type];
+  const ctaHref = post.event ? 'contact.html?type=meeting#enquiry' : 'contact.html#enquiry';
+  const ctaLabel = post.event ? 'Book a Meeting' : 'Contact Us';
   const related = await Promise.all(relatedPosts(post, list).map((p) => card(p, type, { listing: false })));
+  // CTA background: the first photo from the pool that isn't already on this page
+  // (header image, in-article figure or a related card)
+  const onPage = new Set([post.image, post.figure && post.figure.image, ...relatedPosts(post, list).map((p) => p.image)]);
+  const ctaImg = pickCtaImage(CTA_BG.find((b) => !onPage.has(b)) || CTA_BG[0]);
 
   const main = `  <main id="main">
     <article>
@@ -203,8 +292,8 @@ async function detailPage(post, type, list, tpl) {
           </div>
           <a class="article-header__cat" href="${T.list}?category=${post.cat}">${post.catLabel}</a>
           <h1 class="article-header__title">${post.title}</h1>
-          <p class="article-header__meta">
-            ${metaDate}
+          <p class="article-header__meta">${metaDate ? `
+            ${metaDate}` : ''}
             <span>${ICON('user')}Divine Rubber Team</span>
             <span>${ICON('clock')}${post.readMin} min read</span>
           </p>
@@ -215,13 +304,16 @@ async function detailPage(post, type, list, tpl) {
       <!-- 2. Content -->
       <div class="section section--sm section--flush-top">
         <div class="container article-body">
-          <div class="prose">${draftNote}
+          <div class="prose">${post.event ? `
+            ${eventPanel(post)}` : ''}
             ${body}
           </div>
 
           ${aside(post, type)}
         </div>
       </div>
+
+${productsSection(post)}
 
       <!-- Previous / next in listing order (newest first); the first and last article show one link -->
       ${postNav(post, type, list)}
@@ -247,18 +339,18 @@ ${related.join('\n')}
 
     <!-- 4. Closing CTA -->
     <section class="cta-band" aria-labelledby="cta-title">
-      <div class="cta-band__media" aria-hidden="true"><img src="assets/images/industries/retail-1200.webp" width="1200" height="1200" alt="" loading="lazy"></div>
+      <div class="cta-band__media" aria-hidden="true"><img src="${(await ctaImg).src}" width="${(await ctaImg).w}" height="${(await ctaImg).h}" alt="" loading="lazy"></div>
       <div class="container cta-band__inner">
         <div>
-          <span class="cta-band__eyebrow">Ready to Order?</span>
-          <h2 class="cta-band__title" id="cta-title">Find the Right Mat for Your Space</h2>
-          <p class="cta-band__text">Browse our range or tell us your requirements for sizes and pricing.</p>
+          <span class="cta-band__eyebrow">${cta.eyebrow}</span>
+          <h2 class="cta-band__title" id="cta-title">${cta.title}</h2>
+          <p class="cta-band__text">${cta.text}</p>
         </div>
         <div class="btn-group">
-          <a class="btn btn--primary" href="products.html">Explore Our Products
+          <a class="btn btn--primary" href="${ctaHref}">${ctaLabel}
             <span class="btn__icon"><img src="assets/icons/arrow-1.svg" alt="" width="21" height="21"></span>
           </a>
-          <a class="btn btn--outline-light" href="contact.html">Contact Us
+          <a class="btn btn--outline-light" href="products.html">Explore Our Products
             <span class="btn__icon"><svg aria-hidden="true"><use href="assets/icons/sprite.svg#i-arrow-circle"></use></svg></span>
           </a>
         </div>
@@ -294,8 +386,20 @@ function replaceBetween(html, start, end, content, file) {
   };
 
   const written = [];
-  for (const [type, list] of [['blog', blog], ['news', news]]) {
+  const removed = [];
+  for (const [type, all] of [['blog', blog], ['news', news]]) {
     const T = TYPES[type];
+    const list = all.filter((p) => p.status === 'published');
+    for (const post of all.filter((p) => p.status !== 'published')) {
+      const file = fileOf(post, type);
+      if (file === 'blog-detail.html') throw new Error('blog-detail.html is the page template — keep its post published');
+      const full = path.join(ROOT, file);
+      // Only delete pages this script generated (they carry the detail-page body class)
+      if (fs.existsSync(full) && fs.readFileSync(full, 'utf8').includes(`page--solid-header ${T.bodyClass}`)) {
+        fs.unlinkSync(full);
+        removed.push(file);
+      }
+    }
     for (const post of list) written.push(await detailPage(post, type, list, tpl));
 
     // Listing page: filter buttons + cards
@@ -319,6 +423,11 @@ function replaceBetween(html, start, end, content, file) {
   for (const f of written) {
     if (!sm.includes(`${SITE}${f}<`)) sm = sm.replace('</urlset>', `  <url><loc>${SITE}${f}</loc></url>\n</urlset>`);
   }
+  // …and that no draft is
+  const esc = (v) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const drafts = [...blog.map((p) => fileOf(p, 'blog')), ...news.map((p) => fileOf(p, 'news'))].filter((f) => !written.includes(f));
+  for (const f of drafts) sm = sm.replace(new RegExp(`[ \\t]*<url>(?:(?!</url>)[\\s\\S])*?<loc>${esc(SITE + f)}</loc>[\\s\\S]*?</url>\\r?\\n`), '');
   fs.writeFileSync(smFile, sm);
   console.log(`detail pages: ${written.join(', ')}`);
+  if (removed.length) console.log(`unpublished (draft) pages removed: ${removed.join(', ')}`);
 })();

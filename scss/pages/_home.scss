@@ -94,8 +94,9 @@ $zoom-scale: 1.05;
     visibility: hidden;
     transition: opacity 0.9s $ease, visibility 0.9s;
 
-    // Incoming image settles from a slight zoom while it fades in
-    > img {
+    // Incoming image / video settles from a slight zoom while it fades in
+    > img,
+    > video {
       scale: 1.06;
       transition: scale 1.8s $ease;
     }
@@ -104,13 +105,14 @@ $zoom-scale: 1.05;
       opacity: 1;
       visibility: visible;
 
-      > img {
+      > img,
+      > video {
         scale: 1;
       }
     }
 
-    // Photo slides get a readability overlay on the text side
-    &:not(.hero__slide--product)::after {
+    // Readability overlay on the text side (photo and video slides)
+    &::after {
       content: '';
       position: absolute;
       inset: 0;
@@ -119,24 +121,19 @@ $zoom-scale: 1.05;
     }
   }
 
-  // The product photo has a white background; multiply blends it into the
-  // gradient exactly as in the Figma design. The gradient lives on the slide
-  // itself so the blend also works while slides cross-fade.
-  &__slide--product {
-    background: $hero-gradient;
-  }
-
-  &__product {
-    position: absolute;
-    top: 7%;
-    right: 2%;
-    width: min(64%, 1240px);
-    height: auto;
-    mix-blend-mode: multiply;
-  }
-
   &__photo {
     @include cover-image;
+  }
+
+  // Slide 1: full-bleed background video (assets/videos/home-hero.mp4)
+  &__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 50%; // subject sits right of the hero text on wide screens
+    pointer-events: none;
   }
 
   &__content {
@@ -280,7 +277,8 @@ $zoom-scale: 1.05;
   // Reduced motion: no autoplay (see hero.js), no zoom, current segment shown full
   @media (prefers-reduced-motion: reduce) {
     &__slide,
-    &__slide > img {
+    &__slide > img,
+    &__slide > video {
       transition: none;
       scale: none;
     }
@@ -304,21 +302,14 @@ $zoom-scale: 1.05;
     }
   }
 
-  // Tablet & mobile: product image above the text, no overlap
+  // Tablet & mobile: open space above the text shows the slide, no overlap
   @include respond-to(md) {
     min-height: 0;
     padding-top: $header-height-mobile + 24px;
 
-    &__slide--product {
-      position: absolute;
-    }
-
-    &__product {
-      top: $header-height-mobile + 16px;
-      left: 50%;
-      right: auto;
-      width: min(92%, 620px);
-      transform: translateX(-50%);
+    // Tall, narrow frame: keep the centre of the shot, a little above middle
+    &__video {
+      object-position: 50% 40%;
     }
 
     &__content {

@@ -98,11 +98,6 @@ $text: ':is(h2, h3, h4, p, span, strong, small, a, li, time, dt, dd, svg)';
       filter: brightness(0) invert(1);
     }
 
-    // Draft label stays legible on the gradient
-    .post-status {
-      background: rgba(255, 255, 255, 0.18);
-    }
-
     // Inner divider lines
     .machine-card__purpose {
       border-top-color: rgba(255, 255, 255, 0.3);

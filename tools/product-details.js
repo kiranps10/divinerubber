@@ -34,7 +34,12 @@ const APP = {
   playground: { img: 'industries/playground-640', w: 640, h: 640, label: 'Playgrounds' },
   outdoor: { img: 'industries/marine-outdoor-640', w: 640, h: 640, label: 'Outdoor Walkways' },
   retail: { img: 'industries/retail-640', w: 640, h: 640, label: 'Retail & Commercial' },
-  stable: { img: 'products/diamond-top-stable-mat-800', w: 800, h: 533, label: 'Stables & Cattle Sheds' }
+  stable: { img: 'products/diamond-top-stable-mat-800', w: 800, h: 533, label: 'Stables & Cattle Sheds' },
+  // Hollow (open-hole) mats: only photos where the perforated mat is clearly installed.
+  // `crop` → .pd-app--crop-<value> (object-position; inline styles are blocked by the CSP)
+  hollowKitchen: { img: 'industries/restaurant-kitchen-1024', w: 1024, h: 1024, label: 'Restaurant Kitchens', alt: 'Open-hole rubber mats along a restaurant kitchen line', crop: 'floor' },
+  hollowOutdoor: { img: 'about/expertise-universal-pattern-490', w: 490, h: 476, label: 'Outdoor & Garden Areas', alt: 'Universal Pattern hollow rubber mat laid on grass' },
+  hollowPlayground: { img: 'industries/playground-1200', w: 1200, h: 1200, label: 'Playgrounds & Public Areas', alt: 'Perforated hollow rubber safety matting in a playground', crop: 'floor' }
 };
 
 module.exports = {
@@ -69,7 +74,9 @@ module.exports = {
         ['6', '60 × 40 cm', '80 × 50 cm']
       ],
       specExtra: [['Colours', 'Black, Terracotta, Green'], ['Edge', 'Square edged']],
-      apps: [APP.entrance, APP.kitchen, APP.outdoor, APP.playground],
+      // Hollow-mat photos only (entrance / industrial: no photo of a hollow mat installed there yet)
+      apps: [APP.hollowKitchen, APP.hollowOutdoor, APP.hollowPlayground],
+      appsTodo: 'Need real photos of hollow mats installed at an entrance and in an industrial workspace to add those applications',
       related: [
         { name: 'Octagonal Pattern Square Edged', code: 'DH 003', img: 'products/octagonal-pattern-square-edged-480', w: 480, h: 226, alt: 'Black octagonal pattern hollow rubber mat', href: 'contact.html?product=DH%20003%20Octagonal%20Pattern%20Square%20Edged#enquiry', text: 'Textured finish that doesn’t slip, even on polished floors.' },
         { name: 'Diamond Top Runner', img: 'products/diamond-top-runner-roll-480', w: 480, h: 276, alt: 'Rolled diamond-top runner mat', href: 'product-diamond-top-runner.html', text: 'Rubber runner with a diamond-top surface, supplied in rolls.' },

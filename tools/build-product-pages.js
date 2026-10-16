@@ -258,7 +258,7 @@ function page(p) {
           <p class="section-heading__intro">Explore possible uses. Ask our team to confirm suitability for your setting.</p>
         </div>
         <ul class="pd-apps pd-apps--${p.apps.length}"${todoAttr(p.appsTodo)}>
-          ${p.apps.map((a) => `<li class="pd-app"><img src="assets/images/${a.img}.webp" width="${a.w}" height="${a.h}" alt="" loading="lazy"><p class="pd-app__label">${esc(a.label)}</p></li>`).join('\n          ')}
+          ${p.apps.map((a) => `<li class="pd-app${a.crop ? ` pd-app--crop-${a.crop}` : ''}"><img src="assets/images/${a.img}.webp" width="${a.w}" height="${a.h}" alt="${esc(a.alt || '')}" loading="lazy"><p class="pd-app__label">${esc(a.label)}</p></li>`).join('\n          ')}
         </ul>
       </div>
     </section>
